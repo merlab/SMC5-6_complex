@@ -1,6 +1,7 @@
 # https://krassowski.github.io/complex-upset/articles/Examples_R.html
-source("./R/routine_tasks.R")
+#source("./R/routine_tasks.R")
 library(ComplexHeatmap)
+genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 cbpd <- readRDS("./data/cbioportal_data.rds")
 cbpd <- cbpd[cbpd$isalt == 1, ]
 cbpd <- cbpd[cbpd$major != 'Other',]
