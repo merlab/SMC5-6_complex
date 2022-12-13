@@ -91,7 +91,7 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
   return(ggsurv)
 }
 
-df <- readRDS("./results/cbioportal_alt_all.rds")
+df <- readRDS("./data/cbioportal_data.rds")
 df$Complex <- df$isalt
 
 pa <- list()

@@ -15,7 +15,7 @@ makeUpset <- function(sdf, title, cut = 2) {
     breaks <- c(1, 10, 100, 1000, 2000)
     # top annotation bar plot
     top_ha <- HeatmapAnnotation(
-        'Number of \n patients' = anno_barplot(
+        'Number of patients \n (log10 scale)' = anno_barplot(
                 log10(comb_size(m))
                 , bar_width = 0.8
                 , gp = gpar(fill = '#3C3D41', color = '#3C3D41', fontface = 'bold')
@@ -24,11 +24,11 @@ makeUpset <- function(sdf, title, cut = 2) {
                 , ylim = c(1,log10(2000))
                 , axis_param = list(at = log10(breaks), labels = breaks))
         , annotation_name_side = "left"
-        , annotation_name_rot = 0
+        , annotation_name_rot = 90
     )
     # right annotation bar plot
     right_ha = rowAnnotation(
-        'Set size' = anno_barplot(
+        'Set size \n (log10 scale)' = anno_barplot(
                 log10(set_size(m))
                 , bar_width = 0.8
                 , gp = gpar(fill = '#3C3D41', color = '#3C3D41', fontface = 'bold')
@@ -47,7 +47,7 @@ makeUpset <- function(sdf, title, cut = 2) {
         )
 }
 
-pdf('./figures/fig1_upset.pdf', onefile = TRUE, width = 8, height = 5)
+pdf('./figures/fig1c.pdf', onefile = TRUE, width = 8, height = 5)
 plot(makeUpset(cbpd[, genes], 'All', 10))
 dev.off()
 

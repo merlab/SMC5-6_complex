@@ -50,7 +50,7 @@ barchart <- ggplot(plot_df, aes(x=reorder(x, y), y = y, fill = group)) +
         text = element_text(face = 'bold'),
         axis.text.y = element_text(size = 8, color = 'black'))
 # plotting
-pdf('./figures/fig1_bar.pdf', height = 5, width = 4)
+pdf('./figures/fig1b.pdf', height = 5, width = 4)
 plot(barchart)
 dev.off()
 print('done')
