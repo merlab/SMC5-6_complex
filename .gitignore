@@ -1,3 +1,6 @@
+# Large files reomved
+/data/metabric_brca/*
+/data/TCGA_PRAD/*
 # History files
 .Rhistory
 .Rapp.history
