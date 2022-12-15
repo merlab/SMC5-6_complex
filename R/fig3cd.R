@@ -5,7 +5,7 @@ studies <- c('Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)')
 # columns used for analysis
 cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
-ref_df <- readRDS("./data/cbioportal_data.rds")
+ref_df <- readRDS("./data/cbioportal_curated.rds")
 # code taken from:
 # https://stackoverflow.com/questions/3483203/create-a-boxplot-in-r-that-labels-a-box-with-the-sample-size-n
 # rain cloud plots from

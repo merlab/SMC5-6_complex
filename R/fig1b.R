@@ -4,7 +4,7 @@ ylim <- 50
 library(ggplot2)
 
 # load data
-df <- readRDS("./data/cbioportal_data.rds")
+df <- readRDS("./data/cbioportal_curated.rds")
 # exclude others
 df <- df[df$major != "Other", ]
 
@@ -22,6 +22,8 @@ for(i in unique(df$major)) {
 }
 colnames(plot_df) <- c('x', 'y', 'label','group')
 plot_df$y <- as.numeric(plot_df$y)
+plot_df <- plot_df[order(plot_df$y, decreasing = TRUE), ]
+plot_df <- plot_df[1:10,]
 
 plot_df$blank <- ylim
 

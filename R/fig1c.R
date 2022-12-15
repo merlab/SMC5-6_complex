@@ -2,9 +2,9 @@
 #source("./R/routine_tasks.R")
 library(ComplexHeatmap)
 genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
-cbpd <- readRDS("./data/cbioportal_data.rds")
+cbpd <- readRDS("./data/cbioportal_curated.rds")
+#cbpd <- cbpd[cbpd$major != 'Other',]
 cbpd <- cbpd[cbpd$isalt == 1, ]
-cbpd <- cbpd[cbpd$major != 'Other',]
 cbpd$major <- factor(cbpd$major)
 
 makeUpset <- function(sdf, title, cut = 2) {
