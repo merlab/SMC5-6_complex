@@ -2,6 +2,7 @@
 genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 genesdet <- paste0(genes, '_det')
 source("./R/routine_tasks.R")
+folder_check('./data/cbioportal')
 enable_parallelization(detectCores() %/% 2)
 library(data.table)
 
@@ -130,5 +131,6 @@ output_alt <- foreach (i = 3:ncol(df), .combine = "rbind") %dopar% {
 }
 
 output_alt <- as.data.frame(output_alt)
-saveRDS(output_alt, "./data/cbioportal_raw.rds")
+
+saveRDS(output_alt, "./data/cbioportal/raw.rds")
 print("done")

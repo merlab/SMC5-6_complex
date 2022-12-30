@@ -1,6 +1,7 @@
 # purpose: format the data for analysis
+library(writexl)
 source("./R/routine_tasks.R")
-cbpd <- readRDS("./data/cbioportal_deduplicated.rds")
+cbpd <- readRDS("./data/cbioportal/deduplicated.rds")
 # only keep samples that have been profiled for mutation in the complex
 print(dim(cbpd))
 cbpd <- cbpd[cbpd$profiledmut == 'Yes' | cbpd$profiledsv == 'Yes' | cbpd$profiledcna == 'Yes', ]
@@ -75,8 +76,6 @@ tissue_types <- list(
   , "Uterus/Endometrial" = c('endometrial', 'uterine', 'uterus')
   , "Vulva/Vagina" = c('vulva', 'vagina', 'vaginal')
   , "Complex/Unknow" = c("unknown", 'mixed')
-  #, "" = c('endometrial')
-  #, 'Hepatobiliary' = c('hepatobiliary', 'liver')
   )
 cbpd$major <- 'Other'
 for(i in 1:length(tissue_types)) {
@@ -108,16 +107,19 @@ cbpd$ageCat <- ifelse(cbpd$age <= 60, '<=60', '60+')
 for(i in c('isalt', genes)) {
     cbpd[,i] <- as.numeric(cbpd[,i])
 }
-saveRDS(cbpd, "./data/cbioportal_formatted.rds")
+print(table(cbpd$major))
+saveRDS(cbpd, "./data/cbioportal/formatted.rds")
+write_xlsx(cbpd, './results/cbioportal_formatted.xlsx')
 cbpd <- cbpd[!cbpd$major %in% "Other",]
-# cbpd <- cbpd[cbpd$major %in% c("Breast", "Prostate", "Melanoma"
-#                               , "Ovarian", "Endometrial", "Lung", 'Pancreatic'
-#                               , 'Bladder', 'Hepatobiliary', 'Esophagogastric')
-#             ,]
-saveRDS(cbpd, "./data/cbioportal_curated.rds")
+saveRDS(cbpd, "./data/cbioportal/format_exOther.rds")
+cbpd <- cbpd[cbpd$isalt == 1,]
 cbpd$major <- factor(cbpd$major)
 tissuef <- table(cbpd$major)
 tissuef <- tissuef[order(tissuef, decreasing = TRUE)]
 cbpd <- cbpd[cbpd$major %in% names(tissuef)[1:10],]
-saveRDS(cbpd, "./data/cbioportal_top10.rds")
+saveRDS(cbpd, "./data/cbioportal/top10_mut.rds")
 print('done')
+# cbpd <- cbpd[cbpd$major %in% c("Breast", "Prostate", "Melanoma"
+#                               , "Ovarian", "Endometrial", "Lung", 'Pancreatic'
+#                               , 'Bladder', 'Hepatobiliary', 'Esophagogastric')
+#             ,]

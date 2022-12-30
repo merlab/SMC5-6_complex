@@ -29,7 +29,7 @@ malec <- '#70D5E1'
 femalec <- '#FAB7CB'
 studytcgac <- '#EA6025'
 studymetabricc <- '#6673BA'
-cbpd <- readRDS("./data/cbioportal_top10.rds")
+cbpd <- readRDS("./data/cbioportal/top10_mut.rds")
 # NOTE: analyze only those with genomic alteration
 cbpd <- cbpd[cbpd$isalt == 1, ]
 # remove other cancer types

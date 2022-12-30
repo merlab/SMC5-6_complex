@@ -4,7 +4,7 @@ ylim <- 50
 library(ggplot2)
 
 # load data
-df <- readRDS("./data/cbioportal_curated.rds")
+df <- readRDS("./data/cbioportal/format_exOther.rds")
 # exclude others
 df <- df[df$major != "Other", ]
 
@@ -26,7 +26,7 @@ plot_df <- plot_df[order(plot_df$y, decreasing = TRUE), ]
 plot_df <- plot_df[1:10,]
 
 plot_df$blank <- ylim
-
+# <= mayt be good
 # https://community.rstudio.com/t/how-to-change-the-order-in-stacked-bar-chart/82093/2
 # bar chart ggplot
 barchart <- ggplot(plot_df, aes(x=reorder(x, y), y = y, fill = group)) + 

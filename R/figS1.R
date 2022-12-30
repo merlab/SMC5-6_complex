@@ -10,27 +10,57 @@ suppressPackageStartupMessages(library(ComplexHeatmap))
 ## Configuration ##
 ###################
 # what to subset the oncoprint file to
-db <- readRDS("./data/cbioportal_data.rds")
+db <- readRDS("./data/cbioportal/format_exOther.rds")
 rownames(db) <- db$name
 db <- db[, c(grep('_det', colnames(db), value = TRUE), 'major')]
 db <- db[, -1]
 mat <- db
 
-tissue_types <- c("Breast", "Prostate", "Melanoma", "Ovarian", "Endometrial", "Lung", 'Pancreatic', 'Bladder'
-  , 'Hepatobiliary', 'Esophagogastric', 'Bladder')
-tissueName <- c(
-    All = 'All'
-    ,  Ovarian = 'Ovarian cancer'
-    , Breast = 'Breast cancer'
-    , Endometrial = 'Endometrial cancer'
-    , Melanoma = 'Melanoma'
-    , Esophagogastric = 'Esophagogastric cancer'
-    , Prostate = 'Prostate cancer'
-    , Bladder = 'Bladder cancer'
-    , Hepatobiliary = 'Hepatobiliary cancer'
-    , Pancreatic = 'Pancreatic cancer'
-    , Lung = 'Lung cancer'
-)
+#tissue_types <- c("Breast", "Prostate", "Melanoma", "Ovarian", "Endometrial", "Lung", 'Pancreatic', 'Bladder'
+#  , 'Hepatobiliary', 'Esophagogastric', 'Bladder')
+#tissueName <- c(
+#    All = 'All'
+#    ,  Ovarian = 'Ovarian cancer'
+#    , Breast = 'Breast cancer'
+#    , Endometrial = 'Endometrial cancer'
+#    , Melanoma = 'Melanoma'
+#    , Esophagogastric = 'Esophagogastric cancer'
+#    , Prostate = 'Prostate cancer'
+#    , Bladder = 'Bladder cancer'
+#    , Hepatobiliary = 'Hepatobiliary cancer'
+#    , Pancreatic = 'Pancreatic cancer'
+#    , Lung = 'Lung cancer'
+#)
+tissueName <- list(
+    "Adrenocortical" = 'Adenocortical Cancer'
+  , "Ampullary" = 'Ampullary cancer'
+  , "Biliary Tract"  = 'Biliary Cancer'
+  , 'Bladder' = 'Bladder Cancer'
+  , "Bone" = 'Bone Cancer'
+  , "Bowel" = 'Bowel Cancer'
+  , "Breast" = 'Breast Cancer'
+  , "CNS/PNS" = 'Brain Cancer'
+  , "Cervical" = 'Cervical cancer'
+  , 'Esophagogastric/Gastrointestinal' = 'Esophagogastric Cancer'
+  , "Eye" = 'Eye Cancer'
+  , "Head/Neck/Salivary" = 'Head & Neck cancer'
+  , "Kidney" = 'Kidney Cancer'
+  , "Liver" = 'Liver Cancer'
+  , "Lung" = 'Lung Cancer'
+  , "Blood" = 'Blood Cancer'
+  , "Ovarian" = 'Ovarian Cancer'
+  , 'Pancreatic' = 'Pancreatic Cancer'
+  , "Pleura" = 'Pleural cancer'
+  , "Prostate" = 'Prostate Cancer'
+  , "Melanoma/Skin" = 'Melanoma'
+  , "Soft tissue"  = 'Soft tissue cnacer'
+  , "Testis" = 'Testicular Cancer'
+  , "Thymus" = 'Thymus Cancer'
+  , "Thyroid" = 'Thyroid Cancer'
+  , "Uterus/Endometrial" = 'Uterus Cancer'
+  , "Vulva/Vagina"  = 'Vaginal Cancer'
+  , "Complex/Unknow" = 'Complex'
+  )
 
 #pdf('./figures/figS1.pdf', height = 3, width = 11, onefile = TRUE)
 pdf('./figures/figS1.pdf', height = 3, width = 11, onefile = TRUE)

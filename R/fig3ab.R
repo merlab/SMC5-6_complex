@@ -9,7 +9,7 @@ genes <- c("NSMCE2", "Complex")
 tissue <- "Breast"
 colors <- c('#DE3B1C','#707176')
 # read data
-df <- readRDS("./data/cbioportal_curated.rds")
+df <- readRDS("./data/cbioportal/format_exOther.rds")
 df$Complex <- df$isalt
 
 pa <- list()
