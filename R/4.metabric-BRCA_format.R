@@ -60,4 +60,3 @@ rownames(expmattemp) <- features$gene
 folder_check('./data/metabric-brca')
 saveRDS(expmattemp, './data/metabric-brca/microarray_metagx.rds')
 print('done')
-

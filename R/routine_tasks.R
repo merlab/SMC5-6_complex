@@ -412,7 +412,7 @@ rainCloudPlot <- function(mRNA, mutation, type) {
 # give a mRNA expression matrix, the function finds the mutaiton dataset matching it
 obtain_mut_from_mRNA <- function(mRNA) {
       samples <- colnames(mRNA) 
-      cbpd <- readRDS("./results/cbioportal_alt_all.rds")
+      cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
       cbpd <- cbpd[cbpd$name %in% samples, ]
       rownames(cbpd) <- cbpd$name
       cbpd$ploidy <- cbpd$aneuploidyScore <- cbpd$study <- cbpd$tissue <- cbpd$tissue_detailed <- cbpd$name <- cbpd$noSample <- cbpd$sex <- NULL

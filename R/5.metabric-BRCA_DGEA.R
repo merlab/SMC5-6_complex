@@ -4,9 +4,9 @@ library(ggplot2)
 library(ggpubr)
 library(writexl)
 source('./R/routine_tasks.R')
-expmat <- readRDS('./results/metabric-brca/microarray_metagx.rds')
+expmat <- readRDS('./data/metabric-brca/microarray_metagx.rds')
 samples <- colnames(expmat)
-cbpd <- readRDS("./results/cbioportal_alt_all.rds")
+cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
 rownames(cbpd) <- cbpd$name
 cbpd <- cbpd[cbpd$name %in% samples, ]
 expmat <- expmat[, colnames(expmat) %in% cbpd$name]

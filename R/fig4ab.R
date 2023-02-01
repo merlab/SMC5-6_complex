@@ -76,19 +76,21 @@ calc_gsea(b_rank[order(b_rank, decreasing = TRUE)],
   , xlsxout = './results/metabric-brca/pathway_GSEA.xlsx')
 
 breastVolcano <- rmbg(volcanoPlot(b))
-breastVo
 
-pdf('./figures/fig4a.pdf', width = 15, height = 6, onefile = TRUE)
+pdf('./figures/fig4a.pdf', width = 6, height = 6, onefile = TRUE)
 plot(breastVolcano)
 dev.off()
 
 b_mRNA <- readRDS('./data/metabric-brca/microarray_metagx.rds')
 b_mutation <- obtain_mut_from_mRNA(b_mRNA)
 b_mRNA <- b_mRNA[,rownames(b_mutation)]
-pdf('./figures/fig4b.pdf', width = 15, height = 6, onefile = TRUE)
 breastRainCloud <- rainCloudPlot(b_mRNA[top_genes, ], b_mutation, type = 'microarray')
-right <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 2, ncol = 4, align = 'hv'))
-plot(ggarrange(left, right, ncol = 2, nrow = 1, widths = c(1,1.5)))
+#p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 2, ncol = 4, align = 'hv'))
+p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 4, ncol = 2, align = 'hv'))
+#pdf('./figures/fig4b.pdf', width = 15, height = 6, onefile = TRUE)
+pdf('./figures/fig4b.pdf', width = 6, height = 12, onefile = TRUE)
+plot(p)
 dev.off()
+#plot(ggarrange(left, right, ncol = 2, nrow = 1, widths = c(1,1.5)))
 
 print('done')
