@@ -1,5 +1,7 @@
 # Large files reomved
 /data/*
+/figures/*
+/results/*
 
 # History files
 .Rhistory
