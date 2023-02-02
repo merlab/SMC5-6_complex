@@ -13,10 +13,11 @@ library("ggraph")
 library("visNetwork")
 library("threejs")
 library("networkD3")
+library("ndtv")
 library('readxl')
 source('./R/routine_tasks.R')
 set.seed(123)
-colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f')#,'#cab2d6','#6a3d9a','#ffff99','#b15928')
+colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#cab2d6','#6a3d9a','#ffff99','#b15928')
 colors <- adjustcolor(colors, alpha = trans)
 
 # NOTE: making edge & node data.fames
@@ -107,7 +108,7 @@ plot(clp
 # Add labels
 types <- unique(as.factor(nodes$type))
 types <- as.character(types[order(as.numeric(types))])
-colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c', '#cab2d6')
+colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#cab2d6')
 colors <- adjustcolor(colors, alpha = trans)
 types <- c(
   DNA = 'DNA replication & repair'
@@ -136,7 +137,7 @@ set.seed(123)
 fr2 <- layout_with_fr(net, niter = 5000, dim = 2)
 kk <- layout_with_kk(net)
 cs <- layout_with_graphopt(net, charge = 0.1, mass = 0.2, spring.length = 2, spring.constant = 0.1)
-pdf('./figures/figS7row1.pdf', width = 6, height = 6)
+pdf('./figures/figS7a.pdf', width = 6, height = 6)
 par(mar = c(2,2,2,2))
 clp <- cluster_label_prop(net)
 clp$membership <- nodes$type
@@ -183,7 +184,8 @@ dev.off()
 
 
 library(gridExtra)
-pdf('./figures/figS7row2.pdf', width = 20, height = 20)
+pdf('./figures/figS7b.pdf', width = 20, height = 20)
+#svg('./figures/figS7row2.svg', width = 20, height = 20)
 
 types <- c(
   DNA = 'DNA replication & repair'
@@ -206,4 +208,5 @@ tt2 <- ttheme_default(core=list(fg_params=list(hjust=0, x=0)),
                       rowhead=list(fg_params=list(hjust=0, x=0)))
 grid.table(df, theme = tt2)
 dev.off()
-print('done')
+
+print('fig4 supp done')

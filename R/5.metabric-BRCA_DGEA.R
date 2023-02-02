@@ -44,6 +44,8 @@ df$name <- NULL
 df <- df[, c('gene', 'logFC', 'AveExpr', 'P.Value', 'FDR')]
 folder_check('./results/metabric-brca')
 write_xlsx(df, './results/metabric-brca/DGEA_limma.xlsx')
+
+
 rank <- na.omit(setNames(df$logFC, rownames(df)))
 calc_gsea(rank[order(rank, decreasing = TRUE)],
   , rdsout = './data/metabric-brca/pathway_GSEA.rds'
