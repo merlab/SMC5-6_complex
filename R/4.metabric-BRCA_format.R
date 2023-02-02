@@ -1,7 +1,7 @@
 source('./R/routine_tasks.R')
-library(MetaGxBreast)
+#library(MetaGxBreast)
 library(Biobase)
-enable_parallelization()
+enable_parallelization(cores = detectCores() %/% 4 + 1)
 
 esets <- readRDS('./data/metabric-brca-metagx-download.rds')
 

@@ -7,7 +7,6 @@ library(scales)
 library(clusterProfiler)
 library(DOSE)
 library(enrichplot)
-library(writexl)
 library(ggrepel)
 library(fgsea)
 set.seed(123)
@@ -71,9 +70,6 @@ volcanoPlot <- function(df, title, FCt = 0.15, FDRt = 0.001) {
 
 b <- readRDS('./data/metabric-brca/DGEA_limma.rds')
 b_rank <- na.omit(setNames(b$logFC, rownames(b)))
-calc_gsea(b_rank[order(b_rank, decreasing = TRUE)],
-  , rdsout = './data/metabric-brca/pathway_GSEA.rds'
-  , xlsxout = './results/metabric-brca/pathway_GSEA.xlsx')
 
 breastVolcano <- rmbg(volcanoPlot(b))
 
@@ -85,12 +81,8 @@ b_mRNA <- readRDS('./data/metabric-brca/microarray_metagx.rds')
 b_mutation <- obtain_mut_from_mRNA(b_mRNA)
 b_mRNA <- b_mRNA[,rownames(b_mutation)]
 breastRainCloud <- rainCloudPlot(b_mRNA[top_genes, ], b_mutation, type = 'microarray')
-#p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 2, ncol = 4, align = 'hv'))
 p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 4, ncol = 2, align = 'hv'))
-#pdf('./figures/fig4b.pdf', width = 15, height = 6, onefile = TRUE)
 pdf('./figures/fig4b.pdf', width = 6, height = 12, onefile = TRUE)
 plot(p)
 dev.off()
-#plot(ggarrange(left, right, ncol = 2, nrow = 1, widths = c(1,1.5)))
-
 print('done')

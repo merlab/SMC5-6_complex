@@ -37,10 +37,10 @@ cbpd <- cbpd[cbpd$isalt == 1, ]
 
 # NOTE: we rmeoved other section
 cbpd$major <- factor(cbpd$major)
-a <- table(cbpd$major)
-a <- a[order(a)]
-levels <- names(a)
-cbpd$major <- factor(cbpd$major, levels = levels)
+cbpd$major <- factor(cbpd$major
+  , levels = c("Bladder", "Pancreatic", "Endometrial",
+               "Hepatobiliary", "Esophagogastric", "Ovarian",
+               "Melanoma", "Lung", "Prostate", "Breast"))
 # make the sectores based on the major cancer types
 cbpd <- cbpd[order(cbpd$major), ]
 cbpd$sector <- factor(cbpd$major)
