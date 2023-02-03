@@ -1,5 +1,5 @@
-#pdf('./figures/OV_KMS/sub.pdf', width = 12, height = 8, onefile =TRUE)
-pdf('./figures/figS4.pdf', width = 12, height = 6, onefile =TRUE)
+# purpose: ovarian plots
+pdf('./figures/figS3.pdf', width = 12, height = 6, onefile =TRUE)
 library(survminer)
 library(survival)
 library(ggpubr)

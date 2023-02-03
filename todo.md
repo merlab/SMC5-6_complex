@@ -10,5 +10,6 @@
 - [ ] figS1
 - [ ] figS2
 - [ ] figS3
-- [ ] figS4
+- [x] figS4ab
+- [x] figS4cd
 - [ ] figS5

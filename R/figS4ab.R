@@ -14,87 +14,11 @@ dir <- getwd()
 source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
-colors <- c("#CB3814", "#3361BD")
+#colors <- c("#CB3814", "#3361BD")
+colors <- c('#DE3B1C','#707176')
 
-KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, strata = FALSE) {
 
-  # censoring function
-  gc()
-  censor <- 60
-  sur_df$OVS[sur_df$OVT > censor] <- 0
-  sur_df$OVT[sur_df$OVT > censor] <- censor
-
-  diff <- survdiff(Surv(OVT, OVS)~ group, data = sur_df)
-  p.val <- 1 - pchisq(diff$chisq, length(diff$n) - 1)
-  print(p.val)
-
-  title <- title
-  fit <- NA
-  fit <- survfit(Surv(OVT, OVS)~ group, data = sur_df)
-  # https://stat.ethz.ch/pipermail/r-help/2007-April/130676.html
-  # survival plot
-  ggsurv <- 
-    ggsurvplot(fit
-        , conf.int = TRUE
-        , pval = FALSE
-        , palette = colors
-        , xlab = '' 
-        , ylab = ifelse(ylab, "Probability of overall survival",'')
-        , title = title
-        , legend.title='Status'#element_blank()
-        , legend = c(.85,.4)
-        , legend.labs = c('Altered', 'Wild')
-        , risk.table = TRUE
-        , axes.offset = FALSE
-        , risk.table.height = 0.22
-  ) 
-  ggsurv$table <- ggrisktable(fit
-        , data = sur_df
-        , ylab = ''
-        , xlab = ifelse(xlab, "Time (Months)", '')
-        , risk.table.title = ''
-        # add color 
-        , palette = colors
-        , color = 'strata'
-        #, legend.title=element_blank()
-        , legend = 'none'
-        , axes.offset = FALSE
-        #, tables.theme = theme_cleantable()
-        , tables.theme = theme_classic()
-        , fontsize = 3.25
-        , risk.table.col = "strata"
-  ) + scale_y_discrete(labels = c('Wild', 'Altered')) +
-      theme(axis.text.x = element_text(size = 12),
-            axis.title.x = element_text(size = 12),
-            legend.text = element_blank(),
-            legend.title = element_blank())
-  ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12)) 
-  ggsurv$plot <- ggsurv$plot + theme(axis.text.x = element_blank())
-  ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12)) 
-  ggsurv$plot <- ggsurv$plot + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
-  ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
-  ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0,65), breaks = seq(0, 60, 10))
-  ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0,65), breaks = seq(0, 60, 10))
-  if(signif(p.val,1) == 5e-3) {
-    print(p.val)
-    p.val_text <- bquote("P = " ~ '5' ~ 'x' ~ 10^-3)
-  }
-  if(signif(p.val,2) == 1.8e-4) {
-    print(p.val)
-    p.val_text <- bquote("P = " ~ '2' ~ 'x' ~ 10^-4)
-  }
-  ggsurv$plot <- ggsurv$plot + annotate(
-      geom="text", x=10, y=0.1,
-              color="black", size = 5,
-              label=p.val_text
-              )
-  # this is to bring risk table up
-  rm(fit, sur_df)
-  fit <- NA
-  return(ggsurv)
-}
-
-df <- readRDS("./results/cbioportal_alt_all.rds")
+df <- readRDS("./data/cbioportal/formatted.rds")
 df$Complex <- df$isalt
 
 pa <- list()
@@ -178,7 +102,7 @@ studies <- c('Prostate Adenocarcinoma (TCGA, PanCancer Atlas)')
 # columns used for analysis
 cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
-ref_df <- as.data.frame(readRDS(sprintf("./results/cbioportal_alt_all.rds")))
+ref_df <- as.data.frame(readRDS(sprintf("./data/cbioportal/formatted.rds")))
 
 sur_dfs <- list()
 titles <- list()
@@ -204,18 +128,8 @@ for (current_study in studies) {
       }
 }
 
-#pdf("./figures/figS5row1.pdf", width = 13, height = 5)
-pdf("./figures/figS5row1.pdf", width = 13, height = 5)
+pdf("./figures/figS4ab.pdf", width = 13, height = 5)
 plot(ggarrange(pa, pp, nrow = 1, ncol = 2, align = 'hv'))
 dev.off()
 
-pdf("./figures/figS5row2.pdf", width = 10, height = 5)
-p <- list((KM_survival_plot(sur_dfs[[1]], color = colors, title = titles[[1]]))
-            , (KM_survival_plot(sur_dfs[[2]], color = colors, title = titles[[2]])))
-arrange_ggsurvplots(p,
-  print = TRUE,
-  ncol = 2,
-  nrow = 1
-)
-dev.off()
 print('done')

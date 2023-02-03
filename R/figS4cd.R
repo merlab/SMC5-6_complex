@@ -14,7 +14,7 @@ dir <- getwd()
 source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
-colors <- c("#CB3814", "#3361BD")
+colors <- c('#DE3B1C','#707176')
 
 KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, strata = FALSE) {
 
@@ -99,7 +99,7 @@ studies <- c('Prostate Adenocarcinoma (TCGA, PanCancer Atlas)')
 # columns used for analysis
 cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
-ref_df <- as.data.frame(readRDS(sprintf("./results/cbioportal_alt_all.rds")))
+ref_df <- as.data.frame(readRDS(sprintf("./data/cbioportal/formatted.rds")))
 
 sur_dfs <- list()
 titles <- list()
@@ -125,7 +125,7 @@ for (current_study in studies) {
       }
 }
 
-pdf("./figures/figS5row2NC.pdf", width = 10, height = 5)
+pdf("./figures/figS4cd.pdf", width = 10, height = 5)
 p <- list((KM_survival_plot(sur_dfs[[1]], color = colors, title = titles[[1]]))
             , (KM_survival_plot(sur_dfs[[2]], color = colors, title = titles[[2]])))
 arrange_ggsurvplots(p,

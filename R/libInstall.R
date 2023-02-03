@@ -2,7 +2,7 @@ packages <- c('devtools', 'Rcpp','sf',
   'cowplot', 'readr',  'dplyr', 'lavaan', 'Hmisc', 'tidyr', 'igraph',
   'ggplot2','ggpubr', 'ggraph', 'ggrepel', 'circlize', 'network', 
   'networkD3', 'gridExtra','BiocManager', 'readxl', 'writexl', 'remotes', 
-  'foreach', 'doParallel', 'ndtv', 'parallel', 'data.table',
+  'foreach', 'doParallel', 'parallel', 'data.table',
   'survminer', 'survival', 'scales', 'sna', 'threejs', 'visNetwork'
     )
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
