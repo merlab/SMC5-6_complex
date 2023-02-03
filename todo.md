@@ -1,0 +1,14 @@
+- [x] metabric DGEA
+- [ ] metabric PA
+- [x] fig1b
+- [x] fig1c
+- [x] fig2
+- [x] fig3ab
+- [x] fig3cd
+- [ ] fig4b
+- [ ] fig4c
+- [ ] figS1
+- [ ] figS2
+- [ ] figS3
+- [ ] figS4
+- [ ] figS5

@@ -15,19 +15,6 @@ assign("top_genes", top_genes, envir = .GlobalEnv)
 #b_rank <- na.omit(setNames(b$logFC, rownames(b)))
 
 
-make_pathway_db <- function() {
-      pathway_db_dir <- "./data"
-      pathway_db <- NA
-      pathway_db_names <- c("c2.cp.v7.5.1.symbols.gmt")
-      for (i in pathway_db_names) {
-          pathway_db <- c(pathway_db,
-                          gmtPathways(sprintf("%s/%s",pathway_db_dir, i)))
-          print(paste("added", i))
-      }
-      pathway_db <- pathway_db[!duplicated(pathway_db)]
-      #print(paste("number of pathways:", length(pathway_db)))
-      return(pathway_db)
-}
 pathway_sentiment_ana <- function(input) {
   x <- input
   for(i in 1:length(x)) {

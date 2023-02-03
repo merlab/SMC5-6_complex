@@ -1,4 +1,3 @@
-library(ggplot2)
 source('./R/routine_tasks.R')
 cbpd <- readRDS("./data/cbioportal/formatted.rds")
 print(dim(cbpd))

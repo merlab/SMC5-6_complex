@@ -8,6 +8,7 @@ Rscript ./R/fig1b.R & \
   Rscript ./R/fig1c.R & \
   Rscript ./R/fig2.R & \
   Rscript ./R/fig3ab.R & \
+  Rscript ./R/figS1.R & \
   Rscript ./R/fig3cd.R & \
   Rscript ./R/fig4ab.R
 Rscript ./R/fig4c&figS7.R

@@ -5,16 +5,15 @@ max_path <- 145
 show_n_common_gene <- 20
 rm_if_p_common <- 1
 # program
-library('tidyr')
-library("igraph") 
-library("network") 
-library("sna")
-library("ggraph")
-library("visNetwork")
-library("threejs")
-library("networkD3")
-library("ndtv")
-library('readxl')
+library(gridExtra)
+library(tidyr)
+library(igraph) 
+library(network) 
+library(sna)
+library(ggraph)
+library(visNetwork)
+library(threejs)
+library(networkD3)
 source('./R/routine_tasks.R')
 set.seed(123)
 colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#cab2d6','#6a3d9a','#ffff99','#b15928')
@@ -100,9 +99,8 @@ plot(clp
   , layout = layout_nicely
   , remove.multiple = TRUE
   , remove.loops = TRUE
-  # NOTE: If you have changed any of the parameters please double check the values!
-  ,vertex.label=NA
-  ,vertex.frame.color=NA#'grey80'
+  , vertex.label=NA
+  , vertex.frame.color=NA
   )
 
 # Add labels
@@ -137,7 +135,7 @@ set.seed(123)
 fr2 <- layout_with_fr(net, niter = 5000, dim = 2)
 kk <- layout_with_kk(net)
 cs <- layout_with_graphopt(net, charge = 0.1, mass = 0.2, spring.length = 2, spring.constant = 0.1)
-pdf('./figures/figS7a.pdf', width = 6, height = 6)
+pdf('./figures/figS2a.pdf', width = 6, height = 6)
 par(mar = c(2,2,2,2))
 clp <- cluster_label_prop(net)
 clp$membership <- nodes$type
@@ -183,9 +181,7 @@ dev.off()
 
 
 
-library(gridExtra)
-pdf('./figures/figS7b.pdf', width = 20, height = 20)
-#svg('./figures/figS7row2.svg', width = 20, height = 20)
+pdf('./figures/figS2b.pdf', width = 20, height = 20)
 
 types <- c(
   DNA = 'DNA replication & repair'
@@ -196,17 +192,16 @@ types <- c(
 , ECM = 'Extracellular Matrix'
 , Immunity = 'Immune reaction'
 )
-# format typel column name
+# format type column name
 df$'Pathway Name' <- df$names
 df$'Pathway Type' <- types[df$type]
 df$'Enrichment Score' <- pathDf[df$names, 'ES']
 df$'-log10FDR' <- -log10(pathDf[df$names, 'padj'])
 df$'Pathway Name' <- gsub('_', ' ', df$'Pathway Name')
-# https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html
 df$names <- NULL; df$type <- NULL
 tt2 <- ttheme_default(core=list(fg_params=list(hjust=0, x=0)),
                       rowhead=list(fg_params=list(hjust=0, x=0)))
 grid.table(df, theme = tt2)
 dev.off()
 
-print('fig4 supp done')
+print('done')
