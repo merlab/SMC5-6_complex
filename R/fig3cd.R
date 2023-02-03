@@ -134,17 +134,7 @@ for (current_study in studies) {
 }
 
 
-pdf("./figures/fig3cd_censored.pdf", width = 10, height = 5)
-p <- list((KM_survival_plot(sur_dfs[[1]], title = "SMC5/6 complex", censor = TRUE))
-            , (KM_survival_plot(sur_dfs[[2]], title = "NSMCE2", censor = TRUE)))
-arrange_ggsurvplots(p,
-  print = TRUE,
-  ncol = 2,
-  nrow = 1
-)
-dev.off()
-
-pdf("./figures/fig3cd_notcensored.pdf", width = 10, height = 5)
+pdf("./figures/fig3cd.pdf", width = 10, height = 5)
 p <- list((KM_survival_plot(sur_dfs[[1]], title = "SMC5/6 complex", censor = FALSE))
             , (KM_survival_plot(sur_dfs[[2]], title = "NSMCE2", censor = FALSE)))
 arrange_ggsurvplots(p,
