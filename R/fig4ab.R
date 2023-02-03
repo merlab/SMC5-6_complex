@@ -69,7 +69,7 @@ volcanoPlot <- function(df, title, FCt = 0.15, FDRt = 0.001) {
       )
 }
 
-b <- readRDS('./data/metabric-brca/DGEA_limma.rds')
+b <- readRDS('./data/metabric-brca/dgea_limma.rds')
 #b_rank <- na.omit(setNames(b$logFC, rownames(b)))
 #calc_gsea(b_rank[order(b_rank, decreasing = TRUE)],
 #  , rdsout = './data/metabric-brca/pathway_GSEA.rds'

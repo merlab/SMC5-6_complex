@@ -1,8 +1,8 @@
 library(readxl)
 library(writexl)
 
-dgea <- readRDS('./data/metabric-brca/DGEA_limma.rds')
-pa <- readRDS('./data/metabric-brca/pathway_GSEA.rds')
+dgea <- readRDS('./data/metabric-brca/dgea_limma.rds')
+pa <- readRDS('./data/metabric-brca/pathway_gsea.rds')
 
 dgea <- dgea[dgea$adj.P.Val <= 0.05, ]
 pa <- pa[pa$padj <= 0.05,]

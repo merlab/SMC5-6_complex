@@ -1,4 +1,3 @@
-library(writexl)
 library(fgsea)
 make_pathway_db <- function() {
       pathway_db_dir <- "./data"
@@ -14,24 +13,20 @@ make_pathway_db <- function() {
       return(pathway_db)
 }
 # perform genedrug association given a genelist
-calc_gsea <- function(gene_list, rdsout, xlsxout, minSize = 35, maxSize = 145) {
-      gene_list <- gene_list[order(gene_list, decreasing = TRUE)]
-      vector <- gene_list
-      genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
-      o <- fgsea(pathways = make_pathway_db(),
-                      stats = gene_list,
-                      minSize = minSize,
-                      maxSize = maxSize)
-      o <- o[order(o$padj), ]
-      saveRDS(o, rdsout)
-      o$leadingEdge <- NULL
-      write_xlsx(o, xlsxout)
-}
 
 
-df <- readRDS('./data/metabric-brca/DGEA_limma.rds')
-rank <- na.omit(setNames(df$logFC, rownames(df)))
-calc_gsea(rank[order(rank, decreasing = TRUE)],
-  , rdsout = './data/metabric-brca/pathway_GSEA.rds'
-  , xlsxout = './results/metabric-brca/pathway_GSEA.xlsx')
+df <- readRDS('./data/metabric-brca/dgea_limma.rds')
+gene_list <- na.omit(setNames(df$logFC, rownames(df)))
+
+gene_list <- gene_list[order(gene_list, decreasing = TRUE)]
+vector <- gene_list
+genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
+o <- fgsea(pathways = make_pathway_db(),
+                stats = gene_list,
+                minSize = 35,
+                maxSize = 145)
+o <- o[order(o$padj), ]
+saveRDS(o, './data/metabric-brca/pathway_gsea.rds')
+o$leadingEdge <- NULL
+write.csv(o, './results/metabric-brca/pathway_gsea.csv', quote = FALSE)
 print("done")

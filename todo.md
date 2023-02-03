@@ -7,9 +7,9 @@
 - [x] fig3cd
 - [ ] fig4b
 - [ ] fig4c
-- [ ] figS1
+- [x] figS1
 - [ ] figS2
-- [ ] figS3
+- [x] figS3
 - [x] figS4ab
 - [x] figS4cd
 - [ ] figS5
