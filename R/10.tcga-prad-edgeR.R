@@ -73,6 +73,7 @@ print(head(model2))
 
 df <- model2[[1]]
 
+
 saveRDS(df, './data/tcga-prad/dgea-edgeR.rds')
 
 

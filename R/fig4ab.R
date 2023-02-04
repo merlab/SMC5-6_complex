@@ -69,11 +69,7 @@ volcanoPlot <- function(df, title, FCt = 0.15, FDRt = 0.001) {
       )
 }
 
-b <- readRDS('./data/metabric-brca/dgea_limma.rds')
-#b_rank <- na.omit(setNames(b$logFC, rownames(b)))
-#calc_gsea(b_rank[order(b_rank, decreasing = TRUE)],
-#  , rdsout = './data/metabric-brca/pathway_GSEA.rds'
-#  , xlsxout = './results/metabric-brca/pathway_GSEA.xlsx')
+b <- readRDS('./data/metabric-brca/dgea-limma.rds')
 
 breastVolcano <- rmbg(volcanoPlot(b))
 
@@ -81,7 +77,7 @@ pdf('./figures/fig4a.pdf', width = 6, height = 6, onefile = TRUE)
 plot(breastVolcano)
 dev.off()
 
-b_mRNA <- readRDS('./data/metabric-brca/microarray_metagx.rds')
+b_mRNA <- readRDS('./data/metabric-brca/microarray-metagx.rds')
 b_mutation <- obtain_mut_from_mRNA(b_mRNA)
 b_mRNA <- b_mRNA[,rownames(b_mutation)]
 breastRainCloud <- rainCloudPlot(b_mRNA[top_genes, ], b_mutation, type = 'microarray')

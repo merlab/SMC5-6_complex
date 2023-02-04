@@ -3,7 +3,7 @@ library(limma)
 library(ggplot2)
 library(ggpubr)
 source('./R/routine_tasks.R')
-expmat <- readRDS('./data/metabric-brca/microarray_metagx.rds')
+expmat <- readRDS('./data/metabric-brca/microarray-metagx.rds')
 samples <- colnames(expmat)
 cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
 rownames(cbpd) <- cbpd$name
@@ -30,5 +30,5 @@ out$gene <- rownames(out)
 out <- out[order(abs(out$logFC), decreasing = TRUE),]
 
 folder_check('./data/metabric-brca')
-saveRDS(out, './data/metabric-brca/dgea_limma.rds')
+saveRDS(out, './data/metabric-brca/dgea-limma.rds')
 

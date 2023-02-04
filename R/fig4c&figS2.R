@@ -21,7 +21,7 @@ colors <- adjustcolor(colors, alpha = trans)
 
 # NOTE: making edge & node data.fames
 # TODO: fix names. never use PDF
-pathDf <- as.data.frame(readRDS('./data/metabric-brca/pathway_gsea.rds'))
+pathDf <- as.data.frame(readRDS('./data/metabric-brca/pathway-gsea.rds'))
 rownames(pathDf) <- pathDf$pathway
 pathDf <- pathDf[pathDf$padj < 0.01 & pathDf$pval < 0.01, ]
 nodes <- pathDf

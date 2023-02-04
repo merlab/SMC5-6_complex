@@ -15,8 +15,7 @@ volcanoPlot <- function(df, title, FCt = 2, FDRt = 0.001) {
     df$Significance[df$logFC < -FCt & df$logFDR > -log10(FDRt)] <- 'Under Expressed'
     df$logFDR <- as.numeric(df$logFDR)
     df$logFC <- as.numeric(df$logFC)
-    #df2 <- df[df$label %in% top_genes,]
-    limma <- readRDS('./results/metabric-brca/limma.rds')
+    limma <- readRDS('./data/metabric-brca/dgea-limma.rds')
     sharedSigGenes <- intersect(rownames(df)[df$logFDR > -log10(FDRt)], rownames(limma)[limma$adj.P.Val < FDRt])
     df2 <- df[df$label %in% sharedSigGenes,]
     df2 <- df2[order(abs(df2$logFC), decreasing = TRUE),]
@@ -57,16 +56,12 @@ volcanoPlot <- function(df, title, FCt = 2, FDRt = 0.001) {
       )
 }
 
-p <- readRDS('./results/TCGA_PRAD/edgeR.rds')
+p <- readRDS('./data/tcga-prad/dgea-edgeR.rds')
+p$logFDR <- -log10(p$FDR)
 
-#svg('./figures/figS6left.svg', width = 6, height = 8, onefile = TRUE)
-pdf('./figures/figS6left.pdf', width = 6, height = 8, onefile = TRUE)
+pdf('./figures/figS5a.pdf', width = 6, height = 8, onefile = TRUE)
 plot(rmbg(volcanoPlot(p)))
 dev.off()
 
 
-p_rank <- na.omit(setNames(p$logFC, rownames(p)))
-calc_gsea(p_rank[order(p_rank, decreasing = TRUE)],
-  , rdsout = './results/TCGA_PRAD/pathway.rds'
-  , xlsxout = './results/TCGA_PRAD/pathway_enrichment_brca_metabric.xlsx')
 print('done')

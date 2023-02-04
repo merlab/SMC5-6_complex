@@ -15,7 +15,7 @@ make_pathway_db <- function() {
 # perform genedrug association given a genelist
 
 
-df <- readRDS('./data/metabric-brca/dgea_limma.rds')
+df <- readRDS('./data/metabric-brca/dgea-limma.rds')
 gene_list <- na.omit(setNames(df$logFC, rownames(df)))
 
 gene_list <- gene_list[order(gene_list, decreasing = TRUE)]
@@ -26,5 +26,5 @@ o <- fgsea(pathways = make_pathway_db(),
                 minSize = 35,
                 maxSize = 145)
 o <- o[order(o$padj), ]
-saveRDS(o, './data/metabric-brca/pathway_gsea.rds')
+saveRDS(o, './data/metabric-brca/pathway-gsea.rds')
 print("done")

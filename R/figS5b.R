@@ -8,12 +8,10 @@ set.seed(123)
 
 # NOTE: making edge & node data.fames
 # TODO: fix names. never use PDF
-df <- as.data.frame(readRDS('./results/TCGA_PRAD/pathway.rds'))
+df <- as.data.frame(readRDS('./data/tcga-prad/pathway-gsea.rds'))
 rownames(df) <- df$pathway
 df$pathway <- gsub('_', ' ', df$pathway)
-#df <- df[df$padj < 0.05 & df$pval < 0.05, ]
-#df <- df[df$padj < 0.15 & df$pval < 0.05, ]
-df <- df[df$padj < 0.15,]#& df$pval < 0.05, ]
+df <- df[df$padj < 0.15,]
 df$logFDR <- -log10(df$padj)
 df$leadingEdge <- NULL
 df <- df[order(df$ES, decreasing = FALSE), ]
@@ -21,7 +19,7 @@ df$pathway <- gsub('AND', '&', df$pathway)
 df$pathway <- factor(df$pathway, levels = df$pathway)
 
 
-pdf('./figures/figS6right.pdf', height = 8, width = 8)
+pdf('./figures/figS5b.pdf', height = 8, width = 8)
 p <-  ggplot(df, aes(x = ES, y = pathway, size = size, color = logFDR)) +
     geom_point() +
     scale_colour_gradient(low = "blue", high = "red") +

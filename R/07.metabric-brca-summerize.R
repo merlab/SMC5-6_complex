@@ -1,7 +1,7 @@
 library(readxl)
 library(writexl)
 
-dgea <- readRDS('./data/metabric-brca/dgea_limma.rds')
+dgea <- readRDS('./data/metabric-brca/dgea-limma.rds')
 df <- dgea[order(abs(dgea$logFC), decreasing = TRUE), ]
 df$FDR <- df$adj.P.Val
 df$adj.P.Val <- NULL
@@ -10,11 +10,11 @@ df$t <- NULL
 df$B <- NULL
 df$name <- NULL
 df <- df[, c('gene', 'logFC', 'AveExpr', 'P.Value', 'FDR')]
-write.csv(df, './results/metabric-brca/dgea_limma.csv', quote = FALSE)
+write.csv(df, './results/metabric-brca/dgea-limma.csv', quote = FALSE)
 
-pa <- readRDS('./data/metabric-brca/pathway_gsea.rds')
+pa <- readRDS('./data/metabric-brca/pathway-gsea.rds')
 pa$leadingEdge <- NULL
-write.csv(pa, './results/metabric-brca/pathway_gsea.csv', quote = FALSE)
+write.csv(pa, './results/metabric-brca/pathway-gsea.csv', quote = FALSE)
 
 dgea <- dgea[dgea$adj.P.Val <= 0.05, ]
 pa <- pa[pa$padj <= 0.05,]
