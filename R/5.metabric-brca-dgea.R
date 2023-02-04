@@ -31,15 +31,4 @@ out <- out[order(abs(out$logFC), decreasing = TRUE),]
 
 folder_check('./data/metabric-brca')
 saveRDS(out, './data/metabric-brca/dgea_limma.rds')
-df <- out
-df <- df[order(abs(df$logFC), decreasing = TRUE), ]
-df$FDR <- df$adj.P.Val
-df$adj.P.Val <- NULL
-df$Significance <- NULL
-df$t <- NULL
-df$B <- NULL
-df$name <- NULL
-df <- df[, c('gene', 'logFC', 'AveExpr', 'P.Value', 'FDR')]
-folder_check('./results/metabric-brca')
-write.csv(df, './results/metabric-brca/dgea_limma.csv', quote = FALSE)
 

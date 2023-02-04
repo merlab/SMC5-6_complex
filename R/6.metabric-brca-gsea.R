@@ -27,6 +27,4 @@ o <- fgsea(pathways = make_pathway_db(),
                 maxSize = 145)
 o <- o[order(o$padj), ]
 saveRDS(o, './data/metabric-brca/pathway_gsea.rds')
-o$leadingEdge <- NULL
-write.csv(o, './results/metabric-brca/pathway_gsea.csv', quote = FALSE)
 print("done")
