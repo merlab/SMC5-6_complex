@@ -1,3 +1,5 @@
+source('./R/routine_tasks.R')
+folder_check('./results/metabric-brca')
 library(readxl)
 library(writexl)
 
