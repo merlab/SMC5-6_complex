@@ -12,7 +12,7 @@ library(data.table)
 # what to subset the oncoprint file to
 
 
-df <- as.data.frame(data.table::fread("./data/PATIENT_DATA_oncoprint.tsv",header = TRUE))
+df <- as.data.frame(data.table::fread("./data/cbioportal-oncoprint.tsv",header = TRUE))
 
 output_alt <- as.data.frame(matrix(nrow = 0, ncol = (26 + 2*length(genes))))
 colnames(output_alt) <- c(

@@ -57,8 +57,8 @@ KM_plot_PFS <- function(df, title) {
 }
 
 ### formatting
-cl <- readRDS('./results/TCGA_OV/fulldb.rds')
-df <- as.data.frame(data.table::fread("./data/TCGA_OV/oncoprint_2011.tsv", header = TRUE))
+cl <- readRDS('./results/tcga_ov/clinical.rds')
+df <- as.data.frame(data.table::fread("./data/tcga-ov-2011.tsv", header = TRUE))
 cohort2011 <- colnames(df)[-c(1,2)]
 cohort2011 <- cohort2011[cohort2011 %in% rownames(cl)]
 cl$PFS <- as.numeric(cl$PFS); cl$PFT <- as.numeric(cl$PFT); cl$DFS <- as.numeric(cl$DFS); cl$DFT <- as.numeric(cl$DFT); cl$OVS <- as.numeric(cl$OVS); cl$OVT <- as.numeric(cl$OVT)
