@@ -1,6 +1,5 @@
 # Large files reomved
 /data/*
-/results/*
 
 # History files
 .Rhistory
