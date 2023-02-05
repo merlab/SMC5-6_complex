@@ -23,4 +23,4 @@ dgea <- dgea[,c('gene',colnames(dgea)[1:ncol(dgea)-1])]
 
 l <- list(DGEA = dgea,
           GSEA = pa)
-write_xlsx(l,'./results/Supplementary-Data-3_PRAD_diff_Pathway.xlsx')
+write_xlsx(l,'./results/Supplementary-Data-3_PRAD_DGEA_GSEA.xlsx')

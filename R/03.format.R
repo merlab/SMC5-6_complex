@@ -43,10 +43,14 @@ for(i in c('isalt', genes)) {
 print(table(cbpd$major))
 saveRDS(cbpd, "./data/cbioportal/formatted.rds")
 write_xlsx(cbpd, './results/cbioportal_formatted.xlsx')
+# part 2 remove others
 cbpd <- cbpd[!cbpd$major %in% "Other",]
 saveRDS(cbpd, "./data/cbioportal/format_exOther.rds")
-
-
+# get specific columns we want
+df <- cbpd[,c('name','tissue', grep('_det$',colnames(cbpd), value = TRUE))]
+colnames(df) <- gsub('_det', '', colnames(df))
+write_xlsx(df, './results/Supplementary-Data-1_cbioportal_oncoprint.xlsx')
+# part 3 keep only mut
 cbpd <- cbpd[cbpd$isalt == 1,]
 cbpd$major <- factor(cbpd$major)
 tissuef <- table(cbpd$major)
