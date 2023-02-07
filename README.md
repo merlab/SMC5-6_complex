@@ -11,8 +11,11 @@ This is the code to generate the bioinformatics results present in the manuscrip
 
 ## Example
 
+To reproduce figure 2, run the `fig2.R` script. Ensure that you are executing the script.
+From the root directory of the repository (from the `./SMC5-6_complex` folder).
+
 ```
-Rscript ./R/fig2.pdf
+Rscript ./R/fig2.R
 ```
 
 Results:
