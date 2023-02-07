@@ -47,7 +47,14 @@ write_xlsx(cbpd, './results/cbioportal_formatted.xlsx')
 cbpd <- cbpd[!cbpd$major %in% "Other",]
 saveRDS(cbpd, "./data/cbioportal/format_exOther.rds")
 # get specific columns we want
-df <- cbpd[,c('name','tissue', grep('_det$',colnames(cbpd), value = TRUE))]
+df <- cbpd[,c('name','tissue','study','major', grep('_det$',colnames(cbpd), value = TRUE))]
+df$major <- factor(df$major
+  , levels = c("Breast", "Prostate", "Lung", "Melanoma"
+             , "Ovarian", "Esophagogastric", "Hepatobiliary"
+             , "Endometrial", "Pancreatic", "Bladder"))
+df <- df[order(df$major),]
+df$major <- NULL
+colnames(df)[3] <- 'Study name'
 colnames(df) <- gsub('_det', '', colnames(df))
 write_xlsx(df, './results/Supplementary-Data-1_cbioportal_oncoprint.xlsx')
 # part 3 keep only mut
