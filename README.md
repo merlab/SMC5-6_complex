@@ -4,7 +4,7 @@ This is the code to generate the bioinformatics results present in the manuscrip
 
 ## Steps to reproduce the results:
 
-1. Download the data files from the [onedrive folder](https://uottawa-my.sharepoint.com/personal/amer_uottawa_ca/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Famer%5Fuottawa%5Fca%2FDocuments%2FProjects%2FSMC5%2D6%2Fmanuscript&ga=1)
+1. Download the manuscript associated data files from Zenodo at (https://doi.org/10.5281/zenodo.7618023)[https://doi.org/10.5281/zenodo.7618023]
 2. Place the files in the data folder in the data folder of the repository.
 3. Runs the scripts in the `./R/` folder from `s01_...` to `s12_...` in order. 
 4. Run the script pretaining to the figure you would like.
