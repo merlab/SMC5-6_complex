@@ -10,7 +10,7 @@ suppressPackageStartupMessages(library(ComplexHeatmap))
 ## Configuration ##
 ###################
 # what to subset the oncoprint file to
-db <- readRDS("./data/cbioportal/format_exOther.rds")
+db <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
 rownames(db) <- db$name
 db <- db[, c(grep("_det", colnames(db), value = TRUE), "major")]
 db <- db[, -1]
@@ -23,7 +23,6 @@ db <- apply(db[, 1:ncol(db)], 2, function(x) {
     x <- gsub("\\(putative driver\\)", "", x)
     x <- gsub("amp", "Amplification", x)
     x <- gsub("homdel", "Homologous Deletion", x)
-    # x <- gsub(" ;", ";", x)
     x <- gsub(" $", "", x)
 })
 
@@ -45,7 +44,7 @@ tissueName <- c(
     # Lung = "Lung cancer"
 )
 
-pdf("./figures/figS1.pdf", height = 6, width = 11, onefile = TRUE)
+pdf("./reviewer-addressing/oncoWinst.pdf", height = 6, width = 11, onefile = TRUE)
 for (i in names(tissueName)) {
     tissue <- i
     if (tissue == "All") {

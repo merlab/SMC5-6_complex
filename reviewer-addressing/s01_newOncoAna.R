@@ -6,7 +6,7 @@ instabilityGenes <- c("TP53", "BRCA1", "BRCA2", "NBN", "TTK", "AURKA", "PLK1",
                       "CHEK2", "CCNE1", "RB1", "RECQL4", "BLM")
 instabilityGenesDet <- paste0(instabilityGenes, "_det")
 source("./R/routine_tasks.R")
-folder_check("./data/cbioportal")
+folder_check("./reviewer-addressing/cbioportal")
 
 enable_parallelization(detectCores() %/% 2 + 1)
 library(data.table)
@@ -270,5 +270,5 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
 
 output_alt <- as.data.frame(output_alt)
 
-saveRDS(output_alt, "./data/cbioportal/raw.rds")
+saveRDS(output_alt, "./reviewer-addressing/cbioportal/raw.rds")
 print("done")

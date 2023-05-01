@@ -63,7 +63,7 @@ cbpd$otherstudy[cbpd$metabric * cbpd$TCGA == 0] <-  1
 sectors <- cbpd$sector
 
 colors <- setNames(colors, unique(sectors))
-pdf('./figures/fig2.pdf', height = 8.5, width = 8.5)
+pdf('./reviewer-addressing/fig2.pdf', height = 8.5, width = 8.5)
 n <- length(unique(sectors))
 deg <- 60
 circos.par(gap.degree = c(rep(1, n-1), deg)
@@ -75,8 +75,7 @@ circos.par(gap.degree = c(rep(1, n-1), deg)
 circos.initialize(sectors
   , xlim = matrix(c(rep(1, n), (table(sectors) + 1)), ncol = 2))
 # NOTE: plots
-ymax <- length(genes) + 3#4
-# ylabels <- c('Cancer type', 
+ymax <- length(genes) + 3
 ylabels <- c('Study type', 'Sex', 'Age', rev(genes))
 
 circos.track(ylim = c(0.5, ymax + 0.5), bg.border = 'white')
@@ -107,7 +106,6 @@ for(i in unique(sectors)) {
   # NOTE: plot the metadata lanes
   add_points('male', 2, malec, i, cbpd)
   add_points('female', 2, femalec, i, cbpd)
-  # add_points('one', 1, colors[i], i, cbpd)
   # add age
   add_points('under60', 3, under60c, i, cbpd)
   add_points('over60', 3, over60c, i, cbpd)
