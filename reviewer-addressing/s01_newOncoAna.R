@@ -1,6 +1,6 @@
 # purpose: makes the dataframe for the alteration analysis of the complexes in the genes
 #complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
-complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")#, "SLF1", "SLF2")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
 complexGenesDet <- paste0(complexGenes, "_det")
 instabilityGenes <- c("TP53", "BRCA1", "BRCA2", "NBN", "TTK", "AURKA", "PLK1",
                       "CHEK2", "CCNE1", "RB1", "RECQL4", "BLM")

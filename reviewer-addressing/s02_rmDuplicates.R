@@ -2,8 +2,8 @@
 source("./R/routine_tasks.R")
 enable_parallelization()
 # start
-df <- readRDS("./data/cbioportal/raw.rds")
 
+df <- readRDS("./reviewer-addressing/cbioportal/raw.rds")
 repeated_samples <- df$name[duplicated(df$name)]
 print(head(repeated_samples))
 print(length(repeated_samples))
@@ -34,5 +34,5 @@ for (i in repeated_samples) {
 print("deduplication done")
 print(dim(df))
 rownames(df) <- df$name
-saveRDS(df, "./data/cbioportal/deduplicated.rds")
+saveRDS(df, "./reviewer-addressing/cbioportal/deduplicated.rds")
 print("done")

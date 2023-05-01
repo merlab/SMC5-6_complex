@@ -73,7 +73,8 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
     return(p)
 }
 
-cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
+# cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
+cbpd <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
 cancerTypes <- c("All", unique(levels(cbpd$major)))
 cancerTypes <- cancerTypes[cancerTypes != "Other"]
 
@@ -119,7 +120,7 @@ for (cancerType in cancerTypes) {
     # l[[cancerType]] <- cooccur(subcbpd, spp_names = TRUE)
 }
 # pdf("temp.pdf", height = 4, width = 6, onefile = TRUE)
-pdf("temp.pdf", height = 8, width = 12, onefile = TRUE)
+pdf("./reviewer-addressing/co-mutation.pdf", height = 8, width = 12, onefile = TRUE)
 plot(
     ggarrange(plotlist = p, nrow = 2, ncol = 2, common.legend = TRUE, legend = "right")
 )
