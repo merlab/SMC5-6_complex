@@ -38,6 +38,9 @@ KM_survival_plot <- function(sur_df, tit = "", xlab = TRUE, ylab = TRUE, strata 
         sur_df$OVS[sur_df$OVT > 60] <- 0
         sur_df$OVT[sur_df$OVT > 60] <- 60
     }
+    diff <- survdiff(Surv(OVT, OVS) ~ group, data = sur_df)
+    p.val <- 1 - pchisq(diff$chisq, length(diff$n) - 1)
+    print(p.val)
 
     fit <- NA
     fit <- survfit(Surv(OVT, OVS) ~ group, data = sur_df)
@@ -45,7 +48,7 @@ KM_survival_plot <- function(sur_df, tit = "", xlab = TRUE, ylab = TRUE, strata 
     # survival plot
     ggsurv <- ggsurvplot(fit,
         conf.int = TRUE,
-        pval = TRUE,
+        pval = FALSE,
         palette = colors,
         xlab = "",
         ylab = ifelse(ylab, "Probability of overall survival", ""),
@@ -57,9 +60,13 @@ KM_survival_plot <- function(sur_df, tit = "", xlab = TRUE, ylab = TRUE, strata 
         axes.offset = FALSE,
         risk.table.height = 0.22
     )
+    ggsurv$plot <- ggsurv$plot + annotate(
+        geom = "text", x = 60, y = 0.1,
+        color = "black", size = 5,
+        label = paste0("P = ", signif(p.val, 2))
+    )
     rm(fit, sur_df)
     fit <- NA
-    # return(ggsurv)
     print(ggsurv)
 }
 
