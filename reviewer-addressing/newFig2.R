@@ -63,7 +63,7 @@ cbpd$otherstudy[cbpd$metabric * cbpd$TCGA == 0] <-  1
 sectors <- cbpd$sector
 
 colors <- setNames(colors, unique(sectors))
-pdf('./reviewer-addressing/fig2.pdf', height = 8.5, width = 8.5)
+pdf('./reviewer-addressing/plot/newFig2.pdf', height = 8.5, width = 8.5)
 n <- length(unique(sectors))
 deg <- 60
 circos.par(gap.degree = c(rep(1, n-1), deg)

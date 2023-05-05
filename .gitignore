@@ -20,6 +20,11 @@
 
 # Output files from R CMD check
 /*.Rcheck/
+*.RData
+*.png
+reviewer-addressing/tcga/*
+reviewer-addressing/probably_doesnt_work/*
+GDCdata/*
 
 # RStudio files
 .Rproj.user/

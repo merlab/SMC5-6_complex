@@ -127,7 +127,7 @@ for (cancerType in cancerTypes) {
 # p[[3]] <- p[[3]] + theme(axis.text.y = element_blank())
 # pdf("temp.pdf", height = 4, width = 6, onefile = TRUE)
 # pdf("./reviewer-addressing/co-mutation.pdf", height = 8, width = 12, onefile = TRUE)
-pdf("./reviewer-addressing/co-mutation.pdf", height = 5, width = 10.2, onefile = TRUE)
+pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 5, width = 10.2, onefile = TRUE)
 plot(
     ggarrange(
         plotlist = p, nrow = 1, ncol = 3,
@@ -140,7 +140,7 @@ plot(
 
 dev.off()
 
-pdf("./reviewer-addressing/co-mutation-all.pdf", height = 5, width = 5, onefile = TRUE)
+pdf("./reviewer-addressing/plot/co-mutation-all.pdf", height = 5, width = 5, onefile = TRUE)
 plotdf <- generatePlotDf(cbpd)
 plot(makeDotHeatmap(plotdf, cancerType, instabilityGenes, complexGenes))
 dev.off()

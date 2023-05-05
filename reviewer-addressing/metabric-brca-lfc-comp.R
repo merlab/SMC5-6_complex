@@ -20,7 +20,9 @@ doLimmma <- function(cbpd, design) {
 expmat <- readRDS("./data/metabric-brca/microarray-metagx.rds")
 samples <- colnames(expmat)
 cbpd <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
-stop()
+# t <- cbpd[cbpd$isalt == 1, ]
+# t <- t[t$study == "Breast Invasive Carcinoma (TCGA, PanCancer Atlas)", ]
+# stop()
 rownames(cbpd) <- cbpd$name
 cbpd <- cbpd[cbpd$name %in% samples, ]
 expmat <- expmat[, colnames(expmat) %in% cbpd$name]
@@ -62,7 +64,7 @@ df2 <- mergeRes[mergeRes$gene %in% show_genes, ]
 
 # x is complex, y is instability
 set.seed(123)
-pdf(sprintf("./reviewer-addressing/lfc-%s.pdf", instabilityT), height = 6, width = 6)
+pdf(sprintf("./reviewer-addressing/plot/lfc-%s.pdf", instabilityT), height = 6, width = 6)
 plot(
     ggplot(mergeRes, aes(x = logFC.x, y = logFC.y, color = bothSig, alpha = bothSig)) +
         geom_point() + # , size = .25) + alpha = 0.5
