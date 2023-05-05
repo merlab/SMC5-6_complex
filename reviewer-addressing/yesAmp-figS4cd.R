@@ -15,6 +15,21 @@ source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
 colors <- c("#DE3B1C", "#707176")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
+# columns used for analysis
+cols <- c(Complex = "Complex", NSMCE2 = "NSMCE2")
+# color of the plot
+ref_df <- readRDS("./reviewer-addressing/cbioportal/formatted.rds")
+ref_df$NSMCE2 <- ref_df$NSMCE2_det
+ref_df$Complex <- apply(ref_df, 1, function(x) {
+    return(paste(x[paste0(complexGenes, "_det")], collapse = ";"))
+})
+for (i in 1:10) {
+    ref_df$Complex <- gsub(";;", ";", ref_df$Complex)
+    ref_df$Complex <- gsub("^;", "", ref_df$Complex)
+    ref_df$Complex[ref_df$Complex %in% c(";;", ";")] <- ""
+}
 
 KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, strata = FALSE) {
     # censoring function
@@ -74,33 +89,16 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
     ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 170), breaks = seq(0, 160, 40)) #
     ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 170), breaks = seq(0, 160, 40)) #
-    if (signif(p.val, 1) == 0.01) {
-        print(p.val)
-        p.val_text <- bquote("P = " ~ "0.01")
-    }
-    if (signif(p.val, 1) == 8e-4) {
-        print(p.val)
-        p.val_text <- bquote("P = " ~ "8" ~ "x" ~ 10^-4)
-    }
     ggsurv$plot <- ggsurv$plot + annotate(
         geom = "text", x = 30, y = 0.1,
         color = "black", size = 5,
-        label = p.val_text
+        label = paste0("P = ", signif(p.val, 2))
     )
     # this is to bring risk table up
     rm(fit, sur_df)
     fit <- NA
     return(ggsurv)
 }
-
-###################
-###### PART 2 #####
-###################
-studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
-# columns used for analysis
-cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
-# color of the plot
-ref_df <- readRDS("./reviewer-addressing/cbioportal/formatted.rds")
 
 sur_dfs <- list()
 titles <- list()
@@ -114,10 +112,14 @@ for (current_study in studies) {
         print(namecol)
         sur_df <- data.frame(
             study = df$study, tissue = df$tissue, OVT = df$OVT,
-            OVS = df$OVS, group = df[, col]
+            OVS = df$OVS
         )
-        sur_df$OVT <- as.numeric(sur_df$OVT)
+        sur_df$group <- rep(NA, nrow(df))
+        sur_df$group[df[, col] == ""] <- 0
+        sur_df$group[grep("Amplification", df[, col])] <- 1
+        sur_df <- na.omit(sur_df)
 
+        sur_df$OVT <- as.numeric(sur_df$OVT)
         sur_df$OVS <- as.numeric(sur_df$OVS)
         sur_df$group <- as.numeric(sur_df$group)
         sur_df$group <- ifelse(sur_df$group == 1, "Altered", "Wild") # namecol
@@ -127,7 +129,8 @@ for (current_study in studies) {
     }
 }
 
-pdf("./reviewer-addressing/figS4cd.pdf", width = 10, height = 5)
+pdf("./reviewer-addressing/plot/yesAmp-figS4cd.pdf", width = 10, height = 5)
+# png("./reviewer-addressing/plot/figS4cd.png", width = 10, height = 5)
 p <- list(
     (KM_survival_plot(sur_dfs[[1]], color = colors, title = titles[[1]])),
     (KM_survival_plot(sur_dfs[[2]], color = colors, title = titles[[2]]))
@@ -139,4 +142,3 @@ arrange_ggsurvplots(p,
 )
 dev.off()
 print("done")
-
