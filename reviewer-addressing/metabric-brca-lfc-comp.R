@@ -5,6 +5,7 @@ library(ggpubr)
 library(ggrepel)
 library(viridis)
 library(writexl)
+library(DEGreport)
 instabilityT <- 3
 source("./R/routine_tasks.R")
 doLimmma <- function(cbpd, design) {

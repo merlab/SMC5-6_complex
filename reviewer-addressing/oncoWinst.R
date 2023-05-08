@@ -35,16 +35,9 @@ tissueName <- c(
     Ovarian = "Ovarian cancer",
     Breast = "Breast cancer",
     Prostate = "Prostate cancer"
-    # Endometrial = "Endometrial cancer",
-    # Melanoma = "Melanoma",
-    # Esophagogastric = "Esophagogastric cancer",
-    # Bladder = "Bladder cancer",
-    # Hepatobiliary = "Hepatobiliary cancer",
-    # Pancreatic = "Pancreatic cancer",
-    # Lung = "Lung cancer"
 )
 
-pdf("./reviewer-addressing/oncoWinst.pdf", height = 6, width = 11, onefile = TRUE)
+pdf("./reviewer-addressing/plot/oncoWinst.pdf", height = 6, width = 11, onefile = TRUE)
 for (i in names(tissueName)) {
     tissue <- i
     if (tissue == "All") {
@@ -66,14 +59,14 @@ for (i in names(tissueName)) {
     col <- setNames(colors, names)
     alter_fun <- list(
         background = alter_graphic("rect", fill = "#CCCCCC"),
-        "Amplification" = alter_graphic("rect", fill = col["Amplification"]),
         "Deep Deletion" = alter_graphic("rect", fill = col["Deep Deletion"]),
         "Inframe Mutation" = alter_graphic("rect", fill = col["Inframe Mutation"]),
-        "Truncating mutation" = alter_graphic("rect", fill = col["Truncating mutation"]),
         "Splice" = alter_graphic("rect", height = 0.33, fill = col["Splice"]),
         "Structural variation" = alter_graphic("rect", height = 0.33, fill = col["Structural variation"]),
         "Missense Mutation" = alter_graphic("rect", height = 0.33, fill = col["Missense Mutation"]),
-        "Homologous Deletion" = alter_graphic("rect", height = 0.33, fill = col["Homologous Deletion"])
+        "Homologous Deletion" = alter_graphic("rect", height = 0.33, fill = col["Homologous Deletion"]),
+        "Truncating mutation" = alter_graphic("rect", height = 0.66, fill = col["Truncating mutation"]),
+        "Amplification" = alter_graphic("rect", fill = col["Amplification"])
     )
     column_title <- tissueName[i]
 

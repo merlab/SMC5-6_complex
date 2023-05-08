@@ -11,10 +11,14 @@ instabilityGenes <- c(
 )
 
 makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
+    df$pval <- as.numeric(df$pval)
+    df$pval <- p.adjust(df$pval, method = "fdr")
+    print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     df$shared[df$pval > 0.05] <- NA
     df$pval[df$pval > 0.05] <- NA
     df$shared <- as.numeric(df$shared) * 100
     df$log10pval <- -log10(as.numeric(df$pval))
+    print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     complexOrder <- sort(table(df$complex), decreasing = FALSE)
     # print(complexOrder)
     df$complex <- factor(df$complex, levels = complexGenes)
