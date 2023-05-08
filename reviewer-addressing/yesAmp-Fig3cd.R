@@ -8,7 +8,7 @@ complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3
 ## NOTE: all NSMCE2 is alteration in metabric dataset
 cols <- c(Complex = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
-ref_df <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
+ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
 ref_df$NSMCE2 <- ref_df$NSMCE2_det
 ref_df$Complex <- apply(ref_df, 1, function(x) {
     return(paste(x[paste0(complexGenes, "_det")], collapse = ";"))

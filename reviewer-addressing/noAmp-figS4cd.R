@@ -20,7 +20,7 @@ studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # columns used for analysis
 cols <- c(Complex = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
-ref_df <- readRDS("./reviewer-addressing/cbioportal/formatted.rds")
+ref_df <- readRDS("./data/cbioportal/formatted.rds")
 ref_df$NSMCE2 <- ref_df$NSMCE2_det
 ref_df$Complex <- apply(ref_df, 1, function(x) {
     return(paste(x[paste0(complexGenes, "_det")], collapse = ";"))

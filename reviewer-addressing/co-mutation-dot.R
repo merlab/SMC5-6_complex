@@ -142,7 +142,7 @@ dev.off()
 
 pdf("./reviewer-addressing/plot/co-mutation-all.pdf", height = 5, width = 5, onefile = TRUE)
 plotdf <- generatePlotDf(cbpd)
-plot(makeDotHeatmap(plotdf, cancerType, instabilityGenes, complexGenes))
+plot(makeDotHeatmap(plotdf, "All data", instabilityGenes, complexGenes))
 dev.off()
 
 print("done")
