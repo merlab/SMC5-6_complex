@@ -16,6 +16,7 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
     print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     df$shared[df$pval > 0.05] <- NA
     df$pval[df$pval > 0.05] <- NA
+    df$pval[df$pval < 1e-16] <- 1e-16
     df$shared <- as.numeric(df$shared) * 100
     df$log10pval <- -log10(as.numeric(df$pval))
     print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
@@ -39,7 +40,9 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
         ) +
         scale_color_viridis(
             name = expression("-" ~ "log"[10] ~ (P)),
-            # limits = c(-log10(0.05), -log10(1e-6)),
+            limits = c(-log10(0.05), -log10(1e-16)),
+            breaks = c(-log10(0.05), -4, -8, -12, -14),
+            labels = c(0.05, 1e-4, 1e-8, 1e-12, 1e-14)
         ) +
         theme_bw() +
         coord_flip() +

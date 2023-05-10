@@ -1,4 +1,8 @@
 #!/bin/sh
+# init
+Rscript ./reviewer-addressing/s01_newOncoAna.R
+Rscript ./reviewer-addressing/s02_rmDuplicates.R
+Rscript ./reviewer-addressing/s03_format.R
 # for no amp
 Rscript ./reviewer-addressing/noAmp-Fig3ab.R
 Rscript ./reviewer-addressing/noAmp-Fig3cd.R

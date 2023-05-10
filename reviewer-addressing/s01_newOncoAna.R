@@ -209,14 +209,19 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
         # NOTE: this was modified to remove teh mRNA and protein variations in cbioportal data
         foo <- df2[
                 df2$track_name == instabilityGenes[k] & df2$track_type %in% c("CNA", "MUTATIONS", "STRUCTURAL_VARIANT")
+                # df2$track_name == instabilityGenes[k] & df2$track_type %in% c("MUTATIONS")
                 , i]
+
         foo <- foo[foo != ""]
         if (length(foo) == 0) {
             foo <- ""
         }
         foo <- paste(as.vector(foo), collapse = ";", sep = ";")
+        # foo <- gsub("splice", "", foo)
+        foo <- gsub(";;", ";", foo)
         if (foo %in% c(";;", ";", "")) foo <- ""
         foo <- gsub(";;", ";", foo)
+        if (foo %in% c(";;", ";", "")) foo <- ""
         instabilitySum[k] <- ifelse(foo == "", 0, 1)
         instabilitySumDet[k] <- foo
     }

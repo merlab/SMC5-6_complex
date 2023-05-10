@@ -6,6 +6,7 @@ library(ggrepel)
 library(viridis)
 library(writexl)
 library(DEGreport)
+# instabilityT <- 2
 instabilityT <- 3
 source("./R/routine_tasks.R")
 doLimmma <- function(cbpd, design) {
@@ -37,7 +38,9 @@ cbpd$isalt <- factor(cbpd$isalt, levels = c("Wild", "Mutated"))
 cbpd$instabilityScore <- as.numeric(cbpd$instabilityScore)
 # cbpd$instabilityScore <- ifelse(cbpd$instabilityScore >= 3, "Unstable", "Stable")
 cbpd$instabilityScore <- ifelse(cbpd$instabilityScore >= instabilityT, "Unstable", "Stable")
+# cbpd$instabilityScore <- ifelse(cbpd$instabilityScore > instabilityT, "Unstable", "Stable")
 cbpd$instabilityScore <- factor(cbpd$instabilityScore, levels = c("Stable", "Unstable"))
+print(table(cbpd$instabilityScore))
 # complex
 er <- as.numeric(cbpd$isalt)
 design <- model.matrix(~er)
@@ -65,7 +68,7 @@ df2 <- mergeRes[mergeRes$gene %in% show_genes, ]
 
 # x is complex, y is instability
 set.seed(123)
-pdf(sprintf("./reviewer-addressing/plot/lfc-%s.pdf", instabilityT), height = 6, width = 6)
+pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
 plot(
     ggplot(mergeRes, aes(x = logFC.x, y = logFC.y, color = bothSig, alpha = bothSig)) +
         geom_point() + # , size = .25) + alpha = 0.5
