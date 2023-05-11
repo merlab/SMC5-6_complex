@@ -1,20 +1,20 @@
 ###################
 ## Configuration ##
 ###################
+library(readxl)
 studies <- c("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)")
 complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
 # columns used for analysis
 cols <- c(Signature = "Expression Signature") # , NSMCE2 = "NSMCE2")
 #
 expmat <- t(readRDS("./data/metabric-brca/microarray-metagx.rds"))
+# normalize the experssion matrix
 expmat <- apply(expmat, 2, function(x) {
     return((x - mean(x)) / sd(x))
 })
 #
-signatureGenes <- c(
-    "RAD54B", "CCNE2", "RECQL4", "MCM4", "AURKA", #' NSMCE2',
-    "KIF13B", "PPP2R2A", "PARP3", "TP53BP1"
-)
+
+#
 expmat <- expmat[, signatureGenes]
 ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
 ref_df <- ref_df[rownames(expmat), ]

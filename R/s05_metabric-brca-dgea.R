@@ -31,3 +31,7 @@ out <- out[order(abs(out$logFC), decreasing = TRUE), ]
 
 folder_check("./data/metabric-brca")
 saveRDS(out, "./data/metabric-brca/dgea-limma.rds")
+
+out <- out[order(out$adj.P.Val, decreasing = FALSE), ]
+signatureGenes <- out$gene[seq_len(10)]
+write.table(signatureGenes, file = "./results/metabricSignature.txt", quote = FALSE, sep = "\n")
