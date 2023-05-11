@@ -92,6 +92,9 @@ p <- (
         xlab("Genes") +
         ylab("Allele Variation Frequency") +
         guides(fill = "none") +
+        # scale_color_viridis(discrete = TRUE) +
+        # scale_y_continuous(expand = c(0, 0), limits = c(0, 1), breaks = seq(0, .9, .2)) +
+        # scale_y_continuous(expand = c(0, 0), limits = c(0, .5), breaks = seq(0, .5, .1)) +
         scale_y_continuous(expand = c(0, 0), limits = c(0, 1), breaks = seq(0, 1, .1)) +
         theme_classic() +
         theme(
