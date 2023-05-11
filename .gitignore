@@ -1,6 +1,7 @@
 # Large files reomved
 /data/*
 /reviewer-addressing/gdac.broadinstitute.org_BRCA.Mutation_Packager_Calls.Level_3.2016012800.0.0/*
+/reviewer-addressing/plot/*
 
 # History files
 .Rhistory
