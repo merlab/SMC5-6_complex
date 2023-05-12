@@ -27,6 +27,7 @@ ref_df$Complex <- apply(ref_df, 1, function(x) {
 })
 for (i in 1:10) {
     ref_df$Complex <- gsub(";;", ";", ref_df$Complex)
+    ref_df$Complex <- gsub("NA", "", ref_df$Complex)
     ref_df$Complex <- gsub("^;", "", ref_df$Complex)
     ref_df$Complex[ref_df$Complex %in% c(";;", ";")] <- ""
 }
@@ -54,7 +55,7 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
             title = title,
             legend.title = "Status",
             legend = c(.85, .25),
-            legend.labs = c("Altered", "Wild"),
+            legend.labs = c("Amplified", "Wild"),
             risk.table = TRUE,
             axes.offset = FALSE,
             risk.table.height = 0.22
@@ -75,7 +76,7 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
         # NEEDED TO GET THE RISK TABLE CORRECTLY
         , break.time.by = 40,
         xlim = c(0, 160)
-    ) + scale_y_discrete(labels = c("Wild", "Altered")) +
+    ) + scale_y_discrete(labels = c("Wild", "Amplified")) +
         theme(
             axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),
@@ -122,7 +123,7 @@ for (current_study in studies) {
         sur_df$OVT <- as.numeric(sur_df$OVT)
         sur_df$OVS <- as.numeric(sur_df$OVS)
         sur_df$group <- as.numeric(sur_df$group)
-        sur_df$group <- ifelse(sur_df$group == 1, "Altered", "Wild") # namecol
+        sur_df$group <- ifelse(sur_df$group == 1, "Amplified", "Wild") # namecol
         # The top row are for breast cancer, the bottom row is for prostate cancer. #
         sur_dfs[[paste(current_study, namecol)]] <- na.omit(sur_df)
         titles[[paste(current_study, namecol)]] <- namecol

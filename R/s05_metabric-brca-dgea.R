@@ -34,4 +34,9 @@ saveRDS(out, "./data/metabric-brca/dgea-limma.rds")
 
 out <- out[order(out$adj.P.Val, decreasing = FALSE), ]
 signatureGenes <- out$gene[seq_len(10)]
-write.table(signatureGenes, file = "./results/metabricSignature.txt", quote = FALSE, sep = "\n")
+write.table(as.vector(signatureGenes),
+    file = "./results/metabricSignature.txt",
+    quote = FALSE, sep = "\n",
+    row.names = FALSE, col.names = FALSE
+)
+print("done")

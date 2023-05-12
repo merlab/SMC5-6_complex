@@ -55,7 +55,7 @@ KM_survival_plot <- function(sur_df, tit = "", xlab = TRUE, ylab = TRUE, strata 
         title = tit,
         legend.title = "Status",
         legend = c(.85, .4),
-        legend.labs = c("Altered", "Wild"),
+        legend.labs = c("Amplified", "Wild"),
         risk.table = FALSE,
         axes.offset = FALSE,
         risk.table.height = 0.22
@@ -94,7 +94,7 @@ for (current_study in studies) {
 
         sur_df$OVS <- as.numeric(sur_df$OVS)
         sur_df$group <- as.numeric(sur_df$group)
-        sur_df$group <- ifelse(sur_df$group == 1, "Altered", "Wild") # namecol
+        sur_df$group <- ifelse(sur_df$group == 1, "Amplified", "Wild") # namecol
         sur_dfs[[paste(current_study, namecol)]] <- na.omit(sur_df)
         titles[[paste(current_study, namecol)]] <- namecol
     }

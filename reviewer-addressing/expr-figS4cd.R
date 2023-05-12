@@ -21,19 +21,17 @@ studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # columns used for analysis
 cols <- c(Signature = "Expression Signature") # , NSMCE2 = "NSMCE2")
 #
-expmat <- t(readRDS("./data/tcga-prad/rnaseq.rds"))
-expmat <- apply(expmat, 2, function(x) {
+expmat <- readRDS("./data/tcga-prad/rnaseq.rds")
+expmat <- apply(expmat, 1, function(x) {
     return((x - mean(x)) / sd(x))
 })
+
+signatureGenes <- readLines("./results/metabricSignature.txt")
+signatureScore <- rowMeans(expmat[, signatureGenes[signatureGenes %in% colnames(expmat)]])
 #
-signatureGenes <- c(
-    "RAD54B", "CCNE2", "RECQL4", "MCM4", "AURKA", #' NSMCE2',
-    "KIF13B", "PPP2R2A", "PARP3", "TP53BP1"
-)
-expmat <- expmat[, signatureGenes]
 ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
 ref_df <- ref_df[rownames(expmat), ]
-ref_df$Signature <- apply(expmat, 1, median)
+ref_df$Signature <- signatureScore
 ref_df$Signature <- ref_df$Signature > median(ref_df$Signature)
 
 KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, strata = FALSE) {

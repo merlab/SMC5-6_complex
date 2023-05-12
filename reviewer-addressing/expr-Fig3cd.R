@@ -2,23 +2,29 @@
 ## Configuration ##
 ###################
 library(readxl)
-studies <- c("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)")
+current_study <- c("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)")
 complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
 # columns used for analysis
 cols <- c(Signature = "Expression Signature") # , NSMCE2 = "NSMCE2")
 #
-expmat <- t(readRDS("./data/metabric-brca/microarray-metagx.rds"))
+expmat <- readRDS("./data/metabric-brca/microarray-metagx.rds")
 # normalize the experssion matrix
-expmat <- apply(expmat, 2, function(x) {
+expmat <- apply(expmat, 1, function(x) {
     return((x - mean(x)) / sd(x))
 })
+
+signatureGenes <- readLines("./results/metabricSignature.txt")
+signatureScore <- rowMeans(expmat[, signatureGenes])
+
 #
 
 #
-expmat <- expmat[, signatureGenes]
-ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
+# ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
+# ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
+ref_df <- readRDS("./reviewer-addressing/cbioportal/formatted.rds")
 ref_df <- ref_df[rownames(expmat), ]
-ref_df$Signature <- apply(expmat, 1, median)
+ref_df$Signature <- signatureScore
+ref_df$SignatureVal <- signatureScore
 ref_df$Signature <- ref_df$Signature > median(ref_df$Signature)
 
 # code taken from:
@@ -103,25 +109,23 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
 
 sur_dfs <- list()
 titles <- list()
-for (current_study in studies) {
-    print(current_study)
+print(current_study)
 
-    df <- ref_df[ref_df$study == current_study, ]
-    for (l in 1:length(cols)) {
-        col <- names(cols[l])
-        namecol <- as.character(cols[l])
-        print(namecol)
-        sur_df <- data.frame(
-            study = df$study, tissue = df$tissue, OVT = df$OVT,
-            OVS = df$OVS, group = df[, col]
-        )
-        sur_df$OVT <- as.numeric(sur_df$OVT)
-        sur_df$OVS <- as.numeric(sur_df$OVS)
-        sur_df$group <- as.numeric(sur_df$group)
-        sur_df$group <- ifelse(sur_df$group == 1, "High expr", "Low expr") # namecol
-        sur_dfs[[paste(current_study, namecol)]] <- na.omit(sur_df)
-        titles[[paste(current_study, namecol)]] <- namecol
-    }
+df <- ref_df[ref_df$study == current_study, ]
+df$OVT <- as.numeric(df$OVT)
+df$OVS <- as.numeric(df$OVS)
+for (l in seq_along(cols)) {
+    col <- names(cols[l])
+    namecol <- as.character(cols[l])
+    print(namecol)
+    sur_df <- data.frame(
+        study = df$study, tissue = df$tissue, OVT = df$OVT,
+        OVS = df$OVS, group = df[, col]
+    )
+    sur_df$group <- as.numeric(sur_df$group)
+    sur_df$group <- ifelse(sur_df$group == 1, "High expr", "Low expr") # namecol
+    sur_dfs[[paste(current_study, namecol)]] <- na.omit(sur_df)
+    titles[[paste(current_study, namecol)]] <- namecol
 }
 
 
@@ -130,3 +134,5 @@ pdf("./reviewer-addressing/plot/expmat-Fig3cd.pdf", width = 5, height = 5)
 print(KM_survival_plot(sur_dfs[[1]], tit = "Expression Signature"))
 dev.off()
 print("done")
+cox <- coxph(Surv(OVT, OVS) ~ SignatureVal + isalt + NSMCE2 + grade, data = df)
+print(cox)

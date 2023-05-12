@@ -51,7 +51,7 @@ for (gene in genes) {
         )
     )
 }
-plot_df$altStat <- as.factor(ifelse(plot_df$altStat == "1", "Alt not ampli", "Wild"))
+plot_df$altStat <- as.factor(ifelse(plot_df$altStat == "1", "Amplified", "Wild"))
 a_plot_df <- na.omit(data.frame(
     aneuploidyScore = plot_df$aneuploidyScore,
     altStat = plot_df$altStat, gene = plot_df$gene

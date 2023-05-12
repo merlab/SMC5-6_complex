@@ -27,6 +27,7 @@ ref_df$Complex <- apply(ref_df, 1, function(x) {
 })
 for (i in 1:10) {
     ref_df$Complex <- gsub(";;", ";", ref_df$Complex)
+    ref_df$Complex <- gsub("NA", "", ref_df$Complex)
     ref_df$Complex <- gsub("^;", "", ref_df$Complex)
     ref_df$Complex[ref_df$Complex %in% c(";;", ";")] <- ""
 }
