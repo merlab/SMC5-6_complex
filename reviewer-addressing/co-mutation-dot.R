@@ -120,7 +120,6 @@ cancerTypes <- c(
     "Prostate"
 )
 print(cancerTypes)
-# pdf("temp.pdf", height = 4.5, width = 5.5, onefile = TRUE)
 l <- list()
 p <- list()
 for (cancerType in cancerTypes) {
@@ -130,10 +129,6 @@ for (cancerType in cancerTypes) {
     plotdf <- generatePlotDf(subcbpd)
     p[[cancerType]] <- makeDotHeatmap(plotdf, cancerType, instabilityGenes, complexGenes)
 }
-# p[[2]] <- p[[2]] + theme(axis.text.y = element_blank())
-# p[[3]] <- p[[3]] + theme(axis.text.y = element_blank())
-# pdf("temp.pdf", height = 4, width = 6, onefile = TRUE)
-# pdf("./reviewer-addressing/co-mutation.pdf", height = 8, width = 12, onefile = TRUE)
 pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 5, width = 10.2, onefile = TRUE)
 plot(
     ggarrange(
@@ -170,3 +165,6 @@ print("done")
 #     labels = levels(df$instability),
 #     minor_breaks = seq(0.5, max(df$y))
 # ) +
+#
+# install.packages("Rediscover")
+library(Rediscover)

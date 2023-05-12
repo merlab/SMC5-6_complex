@@ -3,25 +3,19 @@
 ###################
 library(readxl)
 current_study <- c("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)")
-complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
-# columns used for analysis
-cols <- c(Signature = "Expression Signature") # , NSMCE2 = "NSMCE2")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
+# columns used for analysis0
+cols <- c(Signature = "SMC5/6 Complex Expression Signature")
 #
 expmat <- readRDS("./data/metabric-brca/microarray-metagx.rds")
 # normalize the experssion matrix
 expmat <- apply(expmat, 1, function(x) {
     return((x - mean(x)) / sd(x))
 })
-
-signatureGenes <- readLines("./results/metabricSignature.txt")
-signatureScore <- rowMeans(expmat[, signatureGenes])
-
 #
-
+signatureScore <- rowMeans(expmat[, colnames(expmat) %in% complexGenes])
 #
-# ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
-# ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
-ref_df <- readRDS("./reviewer-addressing/cbioportal/formatted.rds")
+ref_df <- readRDS("./data/cbioportal/formatted.rds")
 ref_df <- ref_df[rownames(expmat), ]
 ref_df$Signature <- signatureScore
 ref_df$SignatureVal <- signatureScore
@@ -129,10 +123,9 @@ for (l in seq_along(cols)) {
 }
 
 
-# pdf("./reviewer-addressing/plot/fig3cd.pdf", width = 10, height = 5)
-pdf("./reviewer-addressing/plot/expmat-Fig3cd.pdf", width = 5, height = 5)
+pdf("./reviewer-addressing/plot/smcExprSig-Fig3cd.pdf", width = 5, height = 5)
 print(KM_survival_plot(sur_dfs[[1]], tit = "Expression Signature"))
 dev.off()
 print("done")
-cox <- coxph(Surv(OVT, OVS) ~ SignatureVal + isalt + NSMCE2 + grade, data = df)
+cox <- coxph(Surv(OVT, OVS) ~ SignatureVal + isalt, data = df)
 print(cox)

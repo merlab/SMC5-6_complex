@@ -19,7 +19,7 @@ complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3
 studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # o
 # columns used for analysis
-cols <- c(Signature = "Expression Signature") # , NSMCE2 = "NSMCE2")
+cols <- c(Signature = "SMC5/6 derived Expression Signature") # , NSMCE2 = "NSMCE2")
 #
 expmat <- readRDS("./data/tcga-prad/rnaseq.rds")
 expmat <- apply(expmat, 1, function(x) {
@@ -27,7 +27,7 @@ expmat <- apply(expmat, 1, function(x) {
 })
 
 signatureGenes <- readLines("./results/metabricSignature.txt")
-signatureScore <- rowMeans(expmat[, signatureGenes[signatureGenes %in% colnames(expmat)]])
+signatureScore <- rowMeans(expmat[, colnames(expmat) %in% signatureGenes])
 #
 ref_df <- readRDS("./data/cbioportal/format_exOther.rds")
 ref_df <- ref_df[rownames(expmat), ]
@@ -129,7 +129,7 @@ for (current_study in studies) {
     }
 }
 
-pdf("./reviewer-addressing/plot/expmat-figS4cd.pdf", width = 5, height = 5)
+pdf("./reviewer-addressing/plot/lfcExprSig-figS4cd.pdf", width = 5, height = 5)
 print(KM_survival_plot(sur_dfs[[1]], color = colors, title = titles[[1]]))
 dev.off()
 print("done")
