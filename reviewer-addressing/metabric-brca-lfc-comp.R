@@ -80,10 +80,12 @@ plot(
         #     nudge_x = 1, nudge_y = 1,
         #     label.size = NA, fill = NA
         # ) +
+        geom_point(data = df2[df2$logFC.x > 0, ], size = 0.75, color = "red", fill = "red", shape = 15) +
+        geom_point(data = df2[df2$logFC.x < 0, ], size = 0.75, color = "#1966ffff", fill = "#1966ffff", shape = 15) +
         geom_text_repel(
             data = df2[df2$logFC.x < 0, ], mapping = aes(label = gene),
             size = 4, # min.segment.length = 0,
-            label.size = NA, fill = NA, color = "red",
+            label.size = NA, fill = NA, color = "#1966ffff",
             nudge_x = 0,
             xlim = c(-1.12, -1.11),
             alpha = 1
@@ -91,7 +93,7 @@ plot(
         geom_text_repel(
             data = df2[df2$logFC.x > 0, ], mapping = aes(label = gene),
             size = 4, # min.segment.length = 0 # 1.75
-            label.size = NA, fill = NA, , color = "red", # nudge_x = -0.1,
+            label.size = NA, fill = NA, , color = "red",
             # xlim = c(0.95, 1)
             # nudge_x = 0,
             xlim = c(1.05, 1.06),

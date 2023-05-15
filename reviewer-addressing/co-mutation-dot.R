@@ -13,13 +13,13 @@ instabilityGenes <- c(
 makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
     df$pval <- as.numeric(df$pval)
     df$pval <- p.adjust(df$pval, method = "fdr")
-    print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
+    # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     df$shared[df$pval > 0.05] <- NA
     df$pval[df$pval > 0.05] <- NA
-    df$pval[df$pval < 1e-16] <- 1e-16
+    df$pval[df$pval < 1e-100] <- 1e-100
     df$shared <- as.numeric(df$shared) * 100
     df$log10pval <- -log10(as.numeric(df$pval))
-    print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
+    # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     complexOrder <- sort(table(df$complex), decreasing = FALSE)
     # print(complexOrder)
     df$complex <- factor(df$complex, levels = complexGenes)
@@ -40,9 +40,10 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
         ) +
         scale_color_viridis(
             name = expression("-" ~ "log"[10] ~ (P)),
-            limits = c(-log10(0.05), -log10(1e-16)),
-            breaks = c(-log10(0.05), -4, -8, -12, -14),
-            labels = c(0.05, 1e-4, 1e-8, 1e-12, 1e-14)
+            limits = c(-log10(0.05), -log10(1e-100)),
+            # breaks = c(-log10(0.05), -4, -8, -12, -14),
+            breaks = c(-log10(0.05), 10, 25, 50, 75, 100),
+            labels = c(0.05, 1e-10, 1e-25, 1e-50, 1e-75, 1e-100)
         ) +
         theme_bw() +
         coord_flip() +
