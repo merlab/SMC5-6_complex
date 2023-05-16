@@ -86,9 +86,7 @@ complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3
 cols <- c(Signature = "SMC5/6 derived Expression Signature") # , NSMCE2 = "NSMCE2")
 
 dgea <- readRDS("./data/metabric-brca/dgea-limma.rds")
-# dgea <- dgea[order(dgea$adj.P.Val, decreasing = FALSE), ]
 dgea <- dgea[order(abs(dgea$logFC), decreasing = TRUE), ]
-
 geneList <- dgea$gene
 #
 expmat <- readRDS("./data/metabric-brca/microarray-metagx.rds")
@@ -108,8 +106,6 @@ ref_df <- ref_df[ref_df$study == current_study, ]
 
 sur_dfs <- list()
 titles <- list()
-print(current_study)
-
 # signatureGeneList <- list(
 #     "top10" = geneList[seq_len(10)],
 #     "top20" = geneList[seq_len(20)],
@@ -153,6 +149,3 @@ KM_survival_plot(sur_df, title = "")
 
 dev.off()
 print("done")
-# cox <- coxph(Surv(OVT, OVS) ~ SignatureVal + isalt + NSMCE2 + grade, data = df)
-# cox <- coxph(Surv(OVT, OVS) ~ SignatureVal + isalt, data = df)
-# print(cox)
