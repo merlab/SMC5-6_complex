@@ -11,14 +11,21 @@ instabilityGenes <- c(
 )
 
 makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
-    df$pval <- as.numeric(df$pval)
-    df$pval <- p.adjust(df$pval, method = "fdr")
+    # df$pval <- as.numeric(df$pval)
+    # df$pval <- p.adjust(df$pval, method = "fdr")
+    # df$pval <- p.adjust(df$pval, method = "bonferroni")
     # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
-    df$shared[df$pval > 0.05] <- NA
-    df$pval[df$pval > 0.05] <- NA
-    df$pval[df$pval < 1e-100] <- 1e-100
-    df$shared <- as.numeric(df$shared) * 100
-    df$log10pval <- -log10(as.numeric(df$pval))
+    # df$shared[df$pval > 0.05] <- NA
+    # df$pval[df$pval > 0.05] <- NA
+    # df$pval[df$pval < 1e-100] <- 1e-100
+    # df$shared <- as.numeric(df$shared) * 100
+    # df$log10pval <- -log10(as.numeric(df$pval))
+    # df$fdr[df$fdr > 0.05] <- NA
+    df$ppv <- df$ppv * 100
+    df$fn[df$fn > 0.05] <- NA
+    df$ppv[df$fn > 0.05] <- NA
+    # df$ppv[df$fdr > 0.05] <- NA
+    df$log10fdr <- -log10(df$fdr)
     # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
     complexOrder <- sort(table(df$complex), decreasing = FALSE)
     # print(complexOrder)
@@ -28,22 +35,26 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
     df$instability <- factor(df$instability, levels = instabilityGenes)
     df$x <- as.numeric(df$complex)
     df$y <- as.numeric(df$instability)
-    # p <- ggplot(df, aes(x = x, y = y, size = shared, color = log10pval)) +
-    p <- ggplot(df, aes(x = y, y = x, size = shared, color = log10pval)) +
+    # p <- ggplot(df, aes(x = y, y = x, size = shared, color = log10pval)) +
+    # p <- ggplot(df, aes(x = y, y = x, size = ppv, color = log10fdr)) +
+    p <- ggplot(df, aes(x = y, y = x, size = ppv, color = fn)) +
         geom_point() +
         scale_size(
-            name = "% co-occurance",
+            # name = "% co-occurance",
+            name = "Positive Predictive Value",
             breaks = seq(0, 100, 20),
             limits = c(0, 105),
             # range = c(3, 8.5)
             range = c(2, 7)
         ) +
         scale_color_viridis(
-            name = expression("-" ~ "log"[10] ~ (P)),
-            limits = c(-log10(0.05), -log10(1e-100)),
-            # breaks = c(-log10(0.05), -4, -8, -12, -14),
-            breaks = c(-log10(0.05), 10, 25, 50, 75, 100),
-            labels = c(0.05, 1e-10, 1e-25, 1e-50, 1e-75, 1e-100)
+            # name = expression("-" ~ "log"[10] ~ (FDR)),
+            name = "False Negative",
+            limits = c(0, .05)
+            # limits = c(-log10(0.05), -log10(1e-100)),
+            # # breaks = c(-log10(0.05), -4, -8, -12, -14),
+            # breaks = c(-log10(0.05), 10, 25, 50, 75, 100),
+            # labels = c(0.05, 1e-10, 1e-25, 1e-50, 1e-75, 1e-100)
         ) +
         theme_bw() +
         coord_flip() +
@@ -87,25 +98,29 @@ makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
 
 
 generatePlotDf <- function(subcbpd) {
-    plotdf <- data.frame()
+    d <- data.frame()
     for (i in complexGenes) {
         for (j in instabilityGenes) {
             complexAlt <- as.numeric(subcbpd[, i])
             instabilityAlt <- as.numeric(subcbpd[, j])
-            if (length(unique(instabilityAlt)) == 1 || length(unique(complexAlt)) == 1) {
-                pval <- 1
-                shared <- 0
-                next()
-            } else {
-                pval <- fisher.test(complexAlt, instabilityAlt)$p.value
-                shared <- sum(complexAlt == 1 & instabilityAlt == 1) / sum(complexAlt == 1)
-            }
-            plotdf <- rbind(plotdf, c(complex = i, instability = j, pval = pval, shared = shared))
+            tp <- sum(complexAlt == 1 & instabilityAlt == 1)
+            tn <- sum(complexAlt == 0 & instabilityAlt == 0)
+            fn <- sum(complexAlt == 1 & instabilityAlt == 0)
+            fp <- sum(complexAlt == 0 & instabilityAlt == 1)
+            # plotdf <- rbind(plotdf, c(complex = i, instability = j, pval = pval, shared = shared))
+            d <- rbind(d, c(complex = i, instability = j, tp = tp, tn = tn, fp = fp, fn = fn))
         }
     }
-    colnames(plotdf) <- c("complex", "instability", "pval", "shared")
+    colnames(d) <- c("complex", "instability", "tp", "tn", "fp", "fn")
+    d$tp <- as.numeric(d$tp)
+    d$tn <- as.numeric(d$tn)
+    d$fp <- as.numeric(d$fp)
+    d$fn <- as.numeric(d$fn)
+    d[, 3:6] <- d[, 3:6] / rowSums(d[, 3:6])
+    d$ppv <- d$tp / (d$tp + d$fp)
+    d$fdr <- 1 - d$ppv
 
-    return(plotdf)
+    return(d)
 }
 
 # cbpd <- readRDS("./data/cbioportal/format_exOther.rds")
@@ -123,12 +138,15 @@ cancerTypes <- c(
 print(cancerTypes)
 l <- list()
 p <- list()
+plotdfs <- data.frame()
 for (cancerType in cancerTypes) {
     print(cancerType)
     subcbpd <- cbpd[cbpd$major == cancerType, ]
     subcbpd <- subcbpd[, c(complexGenes, instabilityGenes)]
     plotdf <- generatePlotDf(subcbpd)
     p[[cancerType]] <- makeDotHeatmap(plotdf, cancerType, instabilityGenes, complexGenes)
+    plotdf$cancerType <- cancerType
+    plotdfs <- rbind(plotdf, plotdfs)
 }
 pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 5, width = 10.2, onefile = TRUE)
 plot(
@@ -146,6 +164,8 @@ dev.off()
 pdf("./reviewer-addressing/plot/co-mutation-all.pdf", height = 5, width = 5, onefile = TRUE)
 plotdf <- generatePlotDf(cbpd)
 plot(makeDotHeatmap(plotdf, "All data", instabilityGenes, complexGenes))
+plotdf$cancerType <- "all"
+plotdfs <- rbind(plotdf, plotdfs)
 dev.off()
 
 print("done")
@@ -169,3 +189,7 @@ print("done")
 #
 # install.packages("Rediscover")
 library(Rediscover)
+
+
+range(plotdfs$fdr)
+plotdfs[which(plotdfs$fdr == min(plotdfs$fdr)), ]

@@ -48,11 +48,11 @@ generatePlotDf <- function(subcbpd) {
 cbpd <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
 instabilityGenes <- names(sort(colSums(cbpd[, instabilityGenes])))
 
-coMutDf <- generatePlotDf(cbpd)
-coMutDf[, 2:5] <- coMutDf[, 2:5] / rowSums(coMutDf[, 2:5])
-coMutDf$ppv <- coMutDf$tp / (coMutDf$tp + coMutDf$fp)
-coMutDf$FDR <- 1 - coMutDf$ppv
-print(coMutDf)
+d <- generatePlotDf(cbpd)
+d[, 2:5] <- d[, 2:5] / rowSums(d[, 2:5])
+d$ppv <- d$tp / (d$tp + d$fp)
+d$FDR <- 1 - d$ppv
+print(d)
 print("done")
 # cancerTypes <- c("All", unique(levels(cbpd$major)))
 # cancerTypes <- cancerTypes[cancerTypes != "Other"]

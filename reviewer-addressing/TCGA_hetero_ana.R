@@ -1,7 +1,8 @@
 # purpose: download RNASeq of TCGA PRAD from TCGA biolinker
 source("./R/routine_tasks.R")
 source("./R/R_rainclouds.R")
-complexGenes <- c("NSMCE2", "SMC6", "SMC5", "NSMCE1", "NSMCE3", "NSMCE4A", "EID3")
+# complexGenes <- c("NSMCE2", "SMC6", "SMC5", "NSMCE1", "NSMCE3", "NSMCE4A", "EID3")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 folder_check("./reviewer-addressing/tcga/")
 library(TCGAbiolinks)
 library(ggpubr)
