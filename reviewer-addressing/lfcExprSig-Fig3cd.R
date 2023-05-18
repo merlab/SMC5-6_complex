@@ -134,6 +134,7 @@ signatureScore <- rowMeans(expmat[
     # colnames(expmat) %in% signatureGeneList[[sigGeneName]]
     colnames(expmat) %in% geneList[seq_len(10)]
 ])
+
 sur_df$group <- signatureScore
 sur_df <- na.omit(sur_df)
 # hist(sur_df$group)
