@@ -15,7 +15,10 @@ instabilityGenes <- c(
 
 
 labels <- c("False negative", "True negative", "False positive", "True positive")
-colors <- c("#8DC73F", "#006DA040", "#FF9027", "#FF4454")
+# colors <- c("#8DC73F", "#006DA040", "#FF9027", "#FF4454")
+# colors <- c("#8DC73F", "#00456640", "#ffa600", "#FF4454")
+# colors <- c("#8DC73F80", "#00456633", "#ffa60080", "#FF4454")
+colors <- c("#8DC73F80", "#7f7f7f80", "#ffa60080", "#FF4454")
 
 
 generatePlotDf <- function(subcbpd, cancerType) {

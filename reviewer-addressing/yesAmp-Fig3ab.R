@@ -6,6 +6,7 @@ library(cowplot)
 dir <- getwd()
 source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
+# genes <- c("NSMCE2")
 tissue <- "Breast"
 colors <- c("#DE3B1C", "#707176")
 # read data
@@ -20,6 +21,7 @@ df$Complex <- apply(df, 1, function(x) {
 for (i in 1:10) {
     df$Complex <- gsub(";;", ";", df$Complex)
     df$Complex <- gsub("^;", "", df$Complex)
+    df$Complex <- gsub("NA", "", df$Complex)
     df$Complex[df$Complex %in% c(";;", ";")] <- ""
 }
 
@@ -37,9 +39,11 @@ for (gene in genes) {
     ]
     # NOTE: have to change this
     # altStat <- sDf[, gene]
+    # print(table(sDf[, gene], useNA = "a"))
     altStat <- rep(NA, nrow(sDf))
     altStat[sDf[, gene] == ""] <- 0
     altStat[grep("Amplification", sDf[, gene])] <- 1
+    # print(table(altStat, useNA = "a"))
 
     plot_df <- rbind(
         plot_df,

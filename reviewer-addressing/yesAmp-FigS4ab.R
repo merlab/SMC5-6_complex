@@ -28,6 +28,7 @@ df$Complex <- apply(df, 1, function(x) {
 for (i in 1:10) {
     df$Complex <- gsub(";;", ";", df$Complex)
     df$Complex <- gsub("^;", "", df$Complex)
+    df$Complex <- gsub("NA", "", df$Complex)
     df$Complex[df$Complex %in% c(";;", ";")] <- ""
 }
 
@@ -115,10 +116,10 @@ for (i in c("Complex", "NSMCE2")) {
 
     if (i == "Complex") {
         pa[[i]] <- pa[[i]] + guides(fill = "none", color = "none")
-        pp[[i]] <- pp[[i]] + guides(color = "none", fill = guide_legend(title = "Status"))
+        pp[[i]] <- pp[[i]] + guides(fill = "none", color = "none")
     } else {
         pa[[i]] <- pa[[i]] + guides(color = "none", fill = guide_legend(title = "Status"))
-        pp[[i]] <- pp[[i]] + guides(fill = "none", color = "none")
+        pp[[i]] <- pp[[i]] + guides(color = "none", fill = guide_legend(title = "Status"))
     }
 }
 
