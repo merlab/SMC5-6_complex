@@ -1,4 +1,5 @@
 # purpose: makes the dataframe for the alteration analysis of the complexes in the genes
+library(Rediscover)
 source("./R/routine_tasks.R")
 library(ggplot2)
 library(gridExtra)
@@ -36,6 +37,27 @@ generatePlotDf <- function(subcbpd, cancerType) {
             d <- rbind(d, v)
         }
     }
+
+    geneList <- c(complexGenes, instabilityGenes)
+    x <- data.frame(subcbpd[, geneList])
+    x <- data.matrix(t(x))
+    PMA <- getPM(x)
+    mymutex <- getMutex(A=x, PM=PMA)
+    colnames(mymutex) <- geneList
+    rownames(mymutex) <- geneList
+    mymutex <- mymutex[instabilityGenes, complexGenes]
+    nr <- nrow(mymutex)
+    nc <- ncol(mymutex)
+    # mymutex <- matrix(p.adjust(mymutex, method = "fdr"), nrow = nr, ncol = nc)
+    mymutex <- matrix(p.adjust(mymutex, method = "bonferroni"), nrow = nr, ncol = nc)
+    colnames(mymutex) <- complexGenes
+    rownames(mymutex) <- instabilityGenes
+    print(mymutex)
+    mymutex[which(mymutex <= 0.01, arr.ind = TRUE)] <- 0
+    mymutex[which(mymutex > 0.01, arr.ind = TRUE)] <- 1
+    print(table(mymutex))
+    print(mymutex)
+
     colnames(d) <- c("complex", "instability", "tp", "tn", "fp", "fn")
     d$tp <- as.numeric(d$tp)
     d$tn <- as.numeric(d$tn)

@@ -59,7 +59,7 @@ barchart <- ggplot(plot_df, aes(x = reorder(x, y), y = y, fill = group)) +
         axis.text.y = element_text(size = 8, color = "black")
     )
 # plotting
-pdf("./reviewer-addressing/plot/SLF2.pdf", height = 5, width = 4)
+pdf("./reviewer-addressing/plot/SLF2-bar.pdf", height = 5, width = 4)
 plot(barchart)
 dev.off()
 print("done")

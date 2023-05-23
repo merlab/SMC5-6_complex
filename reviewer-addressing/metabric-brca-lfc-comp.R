@@ -68,8 +68,7 @@ df2 <- mergeRes[mergeRes$gene %in% show_genes, ]
 
 # x is complex, y is instability
 set.seed(123)
-pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
-plot(
+p <- (
     ggplot(mergeRes, aes(x = logFC.x, y = logFC.y, color = bothSig, alpha = bothSig)) +
         geom_point() + # , size = .25) + alpha = 0.5
         # scale_color_viridis(discrete = TRUE) +
@@ -142,6 +141,9 @@ plot(
             legend.direction = "horizontal"
         )
 )
+p <- rmbg(p)
+pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
+plot(p)
 dev.off()
 
 colnames(mergeRes) <- gsub("\\.x$", "-SMC5-6", colnames(mergeRes))
@@ -156,5 +158,6 @@ print(dim(mergeRes))
 mergeRes <- mergeRes[, -grep("^Sig-", colnames(mergeRes))]
 print(dim(mergeRes))
 dim(mergeRes[mergeRes$bothSig == "Both", ])
+table(mergeRes$bothSig)
 write_xlsx(mergeRes, "./reviewer-addressing/METABRIC-lfc-analysis.xlsx")
 print("done")

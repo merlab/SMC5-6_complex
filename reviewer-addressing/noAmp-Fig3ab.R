@@ -20,6 +20,8 @@ df$Complex <- apply(df, 1, function(x) {
 for (i in 1:10) {
     df$Complex <- gsub(";;", ";", df$Complex)
     df$Complex <- gsub("^;", "", df$Complex)
+    df$Complex <- gsub("^;", "", df$Complex)
+    df$Complex <- gsub("NA", "", df$Complex)
     df$Complex[df$Complex %in% c(";;", ";")] <- ""
 }
 
@@ -40,6 +42,7 @@ for (gene in genes) {
     altStat <- rep(1, nrow(sDf))
     altStat[sDf[, gene] == ""] <- 0
     altStat[grep("Amplification", sDf[, gene])] <- NA
+    print(gene)
 
     plot_df <- rbind(
         plot_df,
@@ -56,10 +59,12 @@ a_plot_df <- na.omit(data.frame(
     aneuploidyScore = plot_df$aneuploidyScore,
     altStat = plot_df$altStat, gene = plot_df$gene
 ))
+print(table(a_plot_df$altStat, a_plot_df$gene))
 p_plot_df <- na.omit(data.frame(
     ploidy = plot_df$ploidy,
     altStat = plot_df$altStat, gene = plot_df$gene
 ))
+print(table(p_plot_df$altStat, p_plot_df$gene))
 
 for (i in c("Complex", "NSMCE2")) {
     pa[[i]] <- ggplot(a_plot_df[a_plot_df$gene == i, ], aes(
