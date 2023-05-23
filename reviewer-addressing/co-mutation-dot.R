@@ -1,5 +1,5 @@
 # purpose: makes the dataframe for the alteration analysis of the complexes in the genes
-library(Rediscover)
+# library(Rediscover)
 source("./R/routine_tasks.R")
 library(ggplot2)
 library(gridExtra)
@@ -16,13 +16,9 @@ instabilityGenes <- c(
 
 
 labels <- c("False negative", "True negative", "False positive", "True positive")
-# colors <- c("#8DC73F", "#006DA040", "#FF9027", "#FF4454")
-# colors <- c("#8DC73F", "#00456640", "#ffa600", "#FF4454")
-# colors <- c("#8DC73F80", "#00456633", "#ffa60080", "#FF4454")
-colors <- c("#8DC73F80", "#7f7f7f80", "#ffa60080", "#FF4454")
 
 
-generatePlotDf <- function(subcbpd, cancerType) {
+generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
     d <- data.frame()
     for (i in complexGenes) {
         for (j in instabilityGenes) {
@@ -41,22 +37,22 @@ generatePlotDf <- function(subcbpd, cancerType) {
     geneList <- c(complexGenes, instabilityGenes)
     x <- data.frame(subcbpd[, geneList])
     x <- data.matrix(t(x))
-    PMA <- getPM(x)
-    mymutex <- getMutex(A=x, PM=PMA)
-    colnames(mymutex) <- geneList
-    rownames(mymutex) <- geneList
-    mymutex <- mymutex[instabilityGenes, complexGenes]
-    nr <- nrow(mymutex)
-    nc <- ncol(mymutex)
-    # mymutex <- matrix(p.adjust(mymutex, method = "fdr"), nrow = nr, ncol = nc)
-    mymutex <- matrix(p.adjust(mymutex, method = "bonferroni"), nrow = nr, ncol = nc)
-    colnames(mymutex) <- complexGenes
-    rownames(mymutex) <- instabilityGenes
-    print(mymutex)
-    mymutex[which(mymutex <= 0.01, arr.ind = TRUE)] <- 0
-    mymutex[which(mymutex > 0.01, arr.ind = TRUE)] <- 1
-    print(table(mymutex))
-    print(mymutex)
+    # PMA <- getPM(x)
+    # mymutex <- getMutex(A=x, PM=PMA)
+    # colnames(mymutex) <- geneList
+    # rownames(mymutex) <- geneList
+    # mymutex <- mymutex[instabilityGenes, complexGenes]
+    # nr <- nrow(mymutex)
+    # nc <- ncol(mymutex)
+    # # mymutex <- matrix(p.adjust(mymutex, method = "fdr"), nrow = nr, ncol = nc)
+    # mymutex <- matrix(p.adjust(mymutex, method = "bonferroni"), nrow = nr, ncol = nc)
+    # colnames(mymutex) <- complexGenes
+    # rownames(mymutex) <- instabilityGenes
+    # print(mymutex)
+    # mymutex[which(mymutex <= 0.01, arr.ind = TRUE)] <- 0
+    # mymutex[which(mymutex > 0.01, arr.ind = TRUE)] <- 1
+    # print(table(mymutex))
+    # print(mymutex)
 
     colnames(d) <- c("complex", "instability", "tp", "tn", "fp", "fn")
     d$tp <- as.numeric(d$tp)
@@ -92,10 +88,11 @@ generatePlotDf <- function(subcbpd, cancerType) {
             subx$name <- factor(subx$name, levels = c("fn", "tn", "fp", "tp"))
             # print(head(x))
             p[[n]] <- ggplot(subx, aes(x = "", y = value, fill = name)) +
-                geom_bar(stat = "identity", width = 1, color = NA) +
+                geom_bar(stat = "identity", width = 1, color = "white", size= 0.05) +
                 # scale_fill_viridis(
                 scale_fill_manual(
-                    values = colors,
+                    # values = colors,
+                    values = color,
                     name = " ",
                     labels = c("False negative", "True negative", "False positive", "True positive")
                 ) +
@@ -104,7 +101,8 @@ generatePlotDf <- function(subcbpd, cancerType) {
                 theme_void() +
                 theme(
                     plot.title = element_text(size = 1),
-                    plot.background = element_rect(fill = "#D3D3D380", color = "white"),
+                    #plot.background = element_rect(fill = "#D3D3D380", color = "white"),
+                    plot.background = element_blank(),
                     plot.margin = unit(c(1, 1, 1, 1), "pt")
                 )
         }
@@ -116,7 +114,8 @@ generatePlotDf <- function(subcbpd, cancerType) {
         ncol = length(instabilityGenes) + 1,
         common.legend = TRUE,
         align = "hv"
-    )
+    ) +
+                      theme(plot.background = element_rect(color = bgcolor, fill = bgcolor))
     annotate_figure(PLOT,
         top = text_grob(cancerType,
             face = "bold",
@@ -143,123 +142,56 @@ l <- list()
 p <- list()
 plotdfs <- data.frame()
 pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 9, width = 13, onefile = TRUE)
-for (cancerType in cancerTypes[1]) {
+# colors1 <- c("#8DC73F80", "#7f7f7f80", "#ffa60080", "#FF4454")
+# colors2 <- c("#8DC73F", "#006DA040", "#FF9027", "#FF4454")
+# colors3 <- c("#8DC73F", "#00456640", "#ffa600", "#FF4454")
+# colors4 <- c("#8DC73F80", "#00456633", "#ffa60080", "#FF4454")
+# colors5 <- c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3")
+# colors6 <- c("#fbb4ae", "#b3cde3", "#ccebc5", "#decbe4")
+# colors7 <- c("#1b9e77", "#7570b3", "#d95f02", "#e7298a")
+# colors8 <- c("#4daf4a", "#377eb880", "#984ea3", "#e41a1c")
+bgcolor1 <- "#D5E4EB"
+bgcolor2 <- "#F8F2E4"
+bgcolor3 <- "white"
+colors1 <- c("#1CD0BB","#DFDFDF","#00A9D7","#e41a1c")
+colors2 <- c("#1CD0BB","#6E7C7C","#00A9D7","#e41a1c")
+colors3 <- c("#00A9D7","#DFDFDF","#1CD0BB","#e41a1c")
+colors4 <- c("#00A9D7","#6E7C7C","#1CD0BB","#e41a1c")
+
+labels = c("False negative", "True negative", "False positive", "True positive")
+
+
+colorsf <- c("#00A9D7", "#6E7C7C","#e41a1c","#1CD0BB")
+# labels = c("False negative", "True negative", "False positive", "True positive")
+for (cancerType in cancerTypes) {
     print(cancerType)
     subcbpd <- cbpd[cbpd$major == cancerType, ]
     subcbpd <- subcbpd[, c(complexGenes, instabilityGenes)]
-    plot(generatePlotDf(subcbpd, cancerType))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors1, bgcolor = bgcolor1))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors2, bgcolor = bgcolor1))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors3, bgcolor = bgcolor1))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors4, bgcolor = bgcolor1))
+    #
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors1, bgcolor = bgcolor2))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors2, bgcolor = bgcolor2))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors3, bgcolor = bgcolor2))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors4, bgcolor = bgcolor2))
+    #
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors1, bgcolor = bgcolor3))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors2, bgcolor = bgcolor3))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors3, bgcolor = bgcolor3))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors4, bgcolor = bgcolor3))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors4))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors5))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors6))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors7))
+    # plot(generatePlotDf(subcbpd, cancerType, color = colors8))
+    plot(generatePlotDf(subcbpd, cancerType, color = colorsf, bgcolor = bgcolor2))
 }
 dev.off()
 
-# pdf("./reviewer-addressing/plot/co-mutation-all.pdf", height = 9, width = 13, onefile = TRUE)
 pdf("./reviewer-addressing/plot/co-mutation-all.pdf", height = 9, width = 15, onefile = TRUE)
-plot(generatePlotDf(cbpd, "All"))
+plot(generatePlotDf(cbpd, "All", color = colorsf, bgcolor = bgcolor2))
 dev.off()
 
 print("done")
-# saveRDS(l, "./cooccur.rds")
-# scale_x_continuous(
-#     position = "bottom",
-#     expand = c(0, 0),
-#     breaks = seq(1, max(df$x)),
-#     limits = c(0.5, max(df$x) + 0.5),
-#     labels = levels(df$complex),
-#     minor_breaks = seq(0.5, max(df$x))
-# ) +
-# scale_y_continuous(
-#     position = "right",
-#     expand = c(0, 0),
-#     breaks = seq(1, max(df$y)),
-#     limits = c(0.5, max(df$y) + 0.5),
-#     labels = levels(df$instability),
-#     minor_breaks = seq(0.5, max(df$y))
-# ) +
-#
-# install.packages("Rediscover")
-# library(Rediscover)
-# makeDotHeatmap <- function(df, title = NA, instabilityGenes, complexGenes) {
-#     # df$pval <- as.numeric(df$pval)
-#     # df$pval <- p.adjust(df$pval, method = "fdr")
-#     # df$pval <- p.adjust(df$pval, method = "bonferroni")
-#     # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
-#     # df$shared[df$pval > 0.05] <- NA
-#     # df$pval[df$pval > 0.05] <- NA
-#     # df$pval[df$pval < 1e-100] <- 1e-100
-#     # df$shared <- as.numeric(df$shared) * 100
-#     # df$log10pval <- -log10(as.numeric(df$pval))
-#     # df$fdr[df$fdr > 0.05] <- NA
-#     df$ppv <- df$ppv * 100
-#     # df$fn[df$fn > 0.05] <- NA
-#     # df$ppv[df$fn > 0.05] <- NA
-#     # df$ppv[df$fdr > 0.05] <- NA
-#     df$log10fdr <- -log10(df$fdr)
-#     # print(df[df$complex == "NSMCE2" & df$instability == "TP53", ])
-#     complexOrder <- sort(table(df$complex), decreasing = FALSE)
-#     # print(complexOrder)
-#     df$complex <- factor(df$complex, levels = complexGenes)
-#     instabilityOrder <- sort(table(df$instability), decreasing = TRUE)
-#     # print(instabilityOrder)
-#     df$instability <- factor(df$instability, levels = instabilityGenes)
-#     df$x <- as.numeric(df$complex)
-#     df$y <- as.numeric(df$instability)
-#     # p <- ggplot(df, aes(x = y, y = x, size = shared, color = log10pval)) +
-#     # p <- ggplot(df, aes(x = y, y = x, size = ppv, color = log10fdr)) +
-#     p <- ggplot(df, aes(x = y, y = x, size = ppv, color = fn)) +
-#         geom_point() +
-#         scale_size(
-#             # name = "% co-occurance",
-#             name = "Positive Predictive Value",
-#             breaks = seq(0, 100, 20),
-#             limits = c(0, 105),
-#             # range = c(3, 8.5)
-#             range = c(2, 7)
-#         ) +
-#         scale_color_viridis(
-#             # name = expression("-" ~ "log"[10] ~ (FDR)),
-#             name = "False Negative",
-#             limits = c(0, .05)
-#             # limits = c(-log10(0.05), -log10(1e-100)),
-#             # # breaks = c(-log10(0.05), -4, -8, -12, -14),
-#             # breaks = c(-log10(0.05), 10, 25, 50, 75, 100),
-#             # labels = c(0.05, 1e-10, 1e-25, 1e-50, 1e-75, 1e-100)
-#         ) +
-#         theme_bw() +
-#         coord_flip() +
-#         ggtitle(title) +
-#         scale_y_continuous(
-#             position = "right",
-#             expand = c(0, 0),
-#             breaks = seq(1, max(df$x)),
-#             limits = c(0.5, max(df$x) + 0.5),
-#             labels = levels(df$complex),
-#             minor_breaks = seq(0.5, max(df$x))
-#         ) +
-#         scale_x_continuous(
-#             position = "bottom",
-#             expand = c(0, 0),
-#             breaks = seq(1, max(df$y)),
-#             limits = c(0.5, max(df$y) + 0.5),
-#             labels = levels(df$instability),
-#             minor_breaks = seq(0.5, max(df$y))
-#         ) +
-#         xlab("") +
-#         ylab("")
-#     p <- rmbg(p)
-#     p <- p + theme(
-#         axis.text.x = element_text(
-#             angle = 90,
-#             hjust = -0.05,
-#             color = "black",
-#             size = 10
-#         ),
-#         axis.text.y = element_text(color = "black", size = 10),
-#         panel.grid.major = element_blank(),
-#         axis.ticks = element_blank(),
-#         panel.grid.minor = element_line(color = "white", linewidth = 1),
-#         panel.background = element_rect(fill = "#E2E2E2", color = "#E2E2E2"),
-#         plot.title = element_text(hjust = 0.5, size = 12, face = "bold")
-#         # plot.title = element_text(size = 12)
-#     )
-#     return(p)
-# }
-#
