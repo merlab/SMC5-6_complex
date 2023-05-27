@@ -114,7 +114,7 @@ p <- (
         labs(
             color = "",
             y = "Instability log Fold-Change",
-            x = "Complex log Fold-Change"
+            x = "SMC5/6 complex log Fold-Change"
         ) +
         scale_x_continuous(
             limits = c(-1.65, 1.4),
@@ -174,3 +174,4 @@ dim(mergeRes[mergeRes$bothSig == "Both", ])
 table(mergeRes$bothSig)
 write_xlsx(mergeRes, "./reviewer-addressing/METABRIC-lfc-analysis.xlsx")
 print("done")
+head(mergeRes[mergeRes$gene == "RAD54B", ])

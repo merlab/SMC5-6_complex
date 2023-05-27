@@ -2,7 +2,7 @@
 ## Configuration ##
 ###################
 studies <- c("Breast Cancer (METABRIC, Nature 2012 & Nat Commun 2016)")
-complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 # columns used for analysis
 # cols <- c(Complex = "Complex", NSMCE2 = "NSMCE2")
 ## NOTE: all NSMCE2 is alteration in metabric dataset

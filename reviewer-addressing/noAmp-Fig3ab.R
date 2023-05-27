@@ -9,7 +9,7 @@ genes <- c("NSMCE2", "Complex")
 tissue <- "Breast"
 colors <- c("#DE3B1C", "#707176")
 # read data
-complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 # table(unlist(df[, paste0(complexGenes, "_det")]))
 df <- readRDS("./data/cbioportal/format_exOther.rds")
 df$NSMCE2 <- df$NSMCE2_det

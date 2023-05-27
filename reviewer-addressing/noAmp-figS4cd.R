@@ -15,7 +15,7 @@ source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
 colors <- c("#DE3B1C", "#707176")
-complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
 studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # columns used for analysis
 cols <- c(Complex = "Complex", NSMCE2 = "NSMCE2")
