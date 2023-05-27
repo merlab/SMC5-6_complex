@@ -62,6 +62,13 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
     d[, 3:6] <- d[, 3:6] / rowSums(d[, 3:6])
     d$ppv <- d$tp / (d$tp + d$fp)
     d$fdr <- 1 - d$ppv
+    print(range(d$fdr))
+    print(d[which(d$fdr == min(d$fdr)), ])
+    print("")
+    print(d[which(d$instability == "TP53"), ])
+    print(range(d$fp[which(d$instability == "TP53")]))
+    print("")
+    print(d[which(d$complex == "NSMCE2" & d$instability == "TP53"), ])
 
     x <- pivot_longer(d, c("tp", "tn", "fp", "fn"))
     p <- list()

@@ -12,11 +12,13 @@ add_points <- function(colname, y, color, cur_sec
     x <- as.numeric(cbpd) * rev(seq(from = 1, to = length(cbpd), by = 1))
     for (a in seq_along(x)) {
       if (x[a] == 0) next()
-      circos.rect(xleft = x[a], ybottom = y - 0.4
-                , xright = x[a] + xlen, ytop = y + 0.4
-                , sector.index = cur_sec
-                , col = color, border = color
-                , lwd = .03
+      circos.rect(xleft = x[a], 
+                ybottom = y - 0.4,
+                xright = x[a] + xlen, 
+                ytop = y + 0.4,
+                sector.index = cur_sec,
+                col = color, border = color,
+                lwd = .03
                 )
     }
 }
@@ -31,7 +33,20 @@ malec <- "#70D5E1"
 femalec <- "#FAB7CB"
 studytcgac <- "#EA6025"
 studymetabricc <- "#6673BA"
+
 cbpd <- readRDS("./data/cbioportal/top10_mut.rds")
+
+nrow(cbpd)
+x <- cbpd
+x <- x[-grep("TCGA", x$study), ]
+x <- x[-grep("METABRIC", x$study), ]
+nrow(x) / nrow(cbpd)
+tbl <- table(x$study)
+tbl <- sort(tbl, decreasing = TRUE)
+head(tbl)
+146 / nrow(cbpd)
+stop()
+
 # NOTE: analyze only those with genomic alteration
 cbpd <- cbpd[cbpd$isalt == 1, ]
 # remove other cancer types
@@ -44,6 +59,7 @@ cbpd$major <- factor(cbpd$major
                "Hepatobiliary", "Esophagogastric", "Ovarian",
                "Melanoma", "Lung", "Prostate", "Breast"))
 # make the sectores based on the major cancer types
+cbpd <- cbpd[order(cbpd$study), ]
 cbpd <- cbpd[order(cbpd$major), ]
 cbpd$sector <- factor(cbpd$major)
 # cancer type row
@@ -87,11 +103,14 @@ for (i in unique(sectors)) {
   # add grey background color
   for (j in 1:ymax) {
     x <- as.numeric(table(sectors)[i])
-    circos.rect(xleft = 1, ybottom = j - 0.4
-                , xright = x + 1, ytop = j + 0.4
-                , sector.index = i
-                , col = "grey90", border = "grey90"
-                , lwd = .03
+    circos.rect(xleft = 1, 
+                xright = x + 1, 
+                ybottom = j - 0.4,
+                ytop = j +  0.4,
+                sector.index = i,
+                col = "grey90", 
+                border = "grey90",
+                lwd = .03
                 )
   }
 

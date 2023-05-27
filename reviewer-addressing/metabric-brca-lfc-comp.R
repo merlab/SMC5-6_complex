@@ -100,14 +100,21 @@ p <- (
         ) +
         scale_color_manual(
             values = c("#d95f02", "#1b9e77", "#7570b3", "grey50"),
-            labels = c("Both", "SMC5-6 Complex", "Instability Score", "Not Significant")
+            # labels = c("Both", "SMC5-6 Complex", "Instability Score", "Not Significant")
+            labels = c(
+                "Significant in both",
+                "Significant in SMC5-6 Complex",
+                "Significant in instability",
+                "Not Significant"
+            ),
+            name = "Significance"
         ) + # "grey70"
         # scale_alpha_manual(values = c(0.85, 0.5, 0.5, 0.1)) + # 0.1
         scale_alpha_manual(values = c(0.85, 0.4, 0.4, 0.08)) + # 0.1
         labs(
             color = "",
-            y = "Instability LFC",
-            x = "Complex LFC"
+            y = "Instability log Fold-Change",
+            x = "Complex log Fold-Change"
         ) +
         scale_x_continuous(
             limits = c(-1.65, 1.4),
@@ -136,13 +143,16 @@ p <- (
         guides(color = guide_legend(override.aes = list(size = 4)), alpha = "none") +
         theme_classic() +
         theme(
-            legend.position = "top",
-            legend.text = element_text(size = 10),
-            legend.direction = "horizontal"
+            # legend.position = "top",
+            # legend.direction = "horizontal"
+            legend.position = "right",
+            legend.direction = "vertical",
+            legend.text = element_text(size = 10)
         )
 )
 p <- rmbg(p)
-pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
+# pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
+pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 8)
 plot(p)
 dev.off()
 
@@ -157,6 +167,9 @@ mergeRes <- mergeRes[, -grep("^B-", colnames(mergeRes))]
 print(dim(mergeRes))
 mergeRes <- mergeRes[, -grep("^Sig-", colnames(mergeRes))]
 print(dim(mergeRes))
+# table(mergeRes$bothSig) / nrow(mergeRes) * 100
+# table(mergeRes$bothSig)
+# 100 - (84 / (2176 + 84) * 100)
 dim(mergeRes[mergeRes$bothSig == "Both", ])
 table(mergeRes$bothSig)
 write_xlsx(mergeRes, "./reviewer-addressing/METABRIC-lfc-analysis.xlsx")
