@@ -23,7 +23,7 @@ projects <- grep("TCGA-", projects, value = TRUE)
 plotDf <- data.frame()
 for (project in projects) {
     print(project)
-    f <- sprintf("./reviewer-addressing/tcga/%s-mut.rds", project)
+    f <- sprintf("./data/tcga-mut/%s-mut.rds", project)
     if (!file.exists(f)) next()
     mat <- readRDS(f)
     mat <- mat[mat$Hugo_Symbol %in% complexGenes, ]
@@ -100,7 +100,7 @@ sink(NULL)
 
 p <- rmbg(p)
 
-pdf("./reviewer-addressing/plot/hetero-sum.pdf", height = 5, width = 8)
+pdf("./figures/fig3a.pdf", height = 5, width = 8)
 plot(p)
 dev.off()
 print("done")

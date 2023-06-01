@@ -95,7 +95,7 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
             subx$name <- factor(subx$name, levels = c("fn", "tn", "fp", "tp"))
             # print(head(x))
             p[[n]] <- ggplot(subx, aes(x = "", y = value, fill = name)) +
-                geom_bar(stat = "identity", width = 1, color = "white", size= 0.05) +
+                geom_bar(stat = "identity", width = 1, color = "white", size = 0.05) +
                 # scale_fill_viridis(
                 scale_fill_manual(
                     # values = colors,
@@ -108,7 +108,7 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
                 theme_void() +
                 theme(
                     plot.title = element_text(size = 1),
-                    #plot.background = element_rect(fill = "#D3D3D380", color = "white"),
+                    # plot.background = element_rect(fill = "#D3D3D380", color = "white"),
                     plot.background = element_blank(),
                     plot.margin = unit(c(1, 1, 1, 1), "pt")
                 )
@@ -122,7 +122,7 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
         common.legend = TRUE,
         align = "hv"
     ) +
-                      theme(plot.background = element_rect(color = bgcolor, fill = bgcolor))
+        theme(plot.background = element_rect(color = bgcolor, fill = bgcolor))
     annotate_figure(PLOT,
         top = text_grob(cancerType,
             face = "bold",
@@ -160,15 +160,15 @@ pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 9, width = 13, onefil
 bgcolor1 <- "#D5E4EB"
 bgcolor2 <- "#F8F2E4"
 bgcolor3 <- "white"
-colors1 <- c("#1CD0BB","#DFDFDF","#00A9D7","#e41a1c")
-colors2 <- c("#1CD0BB","#6E7C7C","#00A9D7","#e41a1c")
-colors3 <- c("#00A9D7","#DFDFDF","#1CD0BB","#e41a1c")
-colors4 <- c("#00A9D7","#6E7C7C","#1CD0BB","#e41a1c")
+colors1 <- c("#1CD0BB", "#DFDFDF", "#00A9D7", "#e41a1c")
+colors2 <- c("#1CD0BB", "#6E7C7C", "#00A9D7", "#e41a1c")
+colors3 <- c("#00A9D7", "#DFDFDF", "#1CD0BB", "#e41a1c")
+colors4 <- c("#00A9D7", "#6E7C7C", "#1CD0BB", "#e41a1c")
 
-labels = c("False negative", "True negative", "False positive", "True positive")
+labels <- c("False negative", "True negative", "False positive", "True positive")
 
 
-colorsf <- c("#00A9D7", "#6E7C7C","#e41a1c","#1CD0BB")
+colorsf <- c("#00A9D7", "#6E7C7C", "#e41a1c", "#1CD0BB")
 # labels = c("False negative", "True negative", "False positive", "True positive")
 for (cancerType in cancerTypes) {
     print(cancerType)
