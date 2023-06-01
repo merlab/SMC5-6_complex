@@ -1,94 +1,94 @@
+# load libs
+source('./R/R_rainclouds.R')
 library(ggplot2)
 library(ggpubr)
-library(Biobase)
-library(tidyr)
 library(cowplot)
-library(scales)
-library(clusterProfiler)
-library(DOSE)
-library(enrichplot)
-library(ggrepel)
-library(fgsea)
-library(writexl)
-set.seed(123)
-genes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
-source("./R/R_rainclouds.R")
+dir <- getwd()
 source("./R/routine_tasks.R")
+genes <- c("NSMCE2", "Complex")
+tissue <- "Breast"
+colors <- c('#DE3B1C','#707176')
+# read data
+df <- readRDS("./data/cbioportal/format_exOther.rds")
+df$Complex <- df$isalt
 
-volcanoPlot <- function(df, title, FCt = 0.15, FDRt = 0.001) {
-    df$logFDR <- as.numeric(df$logFDR)
-    df$logFC <- as.numeric(df$logFC)
-    df$label <- rownames(df)
-    df$Significance <- "Not Significant"
-    df$Significance[df$logFC > FCt & df$logFDR > -log10(FDRt)] <- "Over Expressed"
-    df$Significance[df$logFC < -FCt & df$logFDR > -log10(FDRt)] <- "Under Expressed"
-    df$logFDR <- as.numeric(df$logFDR)
-    df$logFC <- as.numeric(df$logFC)
-    # print(top_genes)
-
-    df2 <- df[df$label %in% top_genes, ]
-    color <- "red"
-
-    return(
-        ggplot(
-            data = df,
-            aes(x = logFC, y = logFDR, color = Significance)
-        ) +
-            geom_point(size = 1) +
-            scale_color_manual(values = c("grey60", "#ef8a62", "#67a9cf")) +
-            geom_hline(yintercept = -log10(0.001), linetype = "dashed") +
-            geom_vline(xintercept = -0.15, linetype = "dashed") +
-            geom_vline(xintercept = 0.15, linetype = "dashed") +
-            ylab(expression("-log"[10] * "FDR")) +
-            xlab(expression("log"[2] * "FC")) +
-            # add notable genes
-            geom_point(data = df2[df2$logFC > 0, ], size = 0.75, color = "red", fill = "red", shape = 15) +
-            geom_point(data = df2[df2$logFC < 0, ], size = 0.75, color = "#1966ffff", fill = "#1966ffff", shape = 15) +
-            geom_label_repel(
-                data = df2[df2$logFC < 0, ], mapping = aes(label = label),
-                size = 4, min.segment.length = 0,
-                label.size = NA, fill = NA, color = "#1966ffff",
-                xlim = c(-1, -1.1), nudge_y = 30, nudge_x = 0
-            ) +
-            geom_label_repel(
-                data = df2[df2$logFC > 0, ], mapping = aes(label = label),
-                size = 4, nudge_x = -0.1, nudge_y = 30, min.segment.length = 0 # 1.75
-                , label.size = NA, fill = NA, , color = "red"
-                # , xlim = c(-0.2,-0.7)
-                , xlim = c(0.9, 1)
-            ) +
-            xlim(min(df$logFC), 1.25) +
-            scale_x_continuous(
-                breaks = round(c(min(df$logFC), seq(-1.5, 1.5, 0.25)), digits = 2),
-                limits = c(min(df$logFC), 1.25)
-            ) +
-            ylim(0, 135) +
-            scale_y_continuous(breaks = c(seq(0, 125, 25), 135)) +
-            theme_classic() +
-            guides(color = guide_legend(override.aes = list(size = 2))) +
-            theme(
-                legend.title = element_text(size = 12),
-                legend.text = element_text(size = 12),
-                legend.position = c(0.25, 0.8),
-                axis.text.x = element_text(angle = 45, hjust = 1)
-            )
+pa <- list()
+pp <- list()
+plot_df <- data.frame(gene = NA, aneuploidyScore = NA
+                , ploidy = NA, altStat = NA)
+for (gene in genes) {
+    sDf <- df[
+        grep(tissue, df$tissue, ignore.case = TRUE)
+        ,c(gene, "aneuploidyScore", "ploidy")]
+    plot_df <- rbind(plot_df, 
+                data.frame(gene = gene, 
+                    aneuploidyScore = as.numeric(sDf$aneuploidyScore), 
+                    ploidy = as.numeric(sDf$ploidy),
+                    altStat = (sDf[,gene]))
     )
 }
+plot_df$altStat <- as.factor(ifelse(plot_df$altStat == "1", "Altered", "Wild"))
+a_plot_df <- na.omit(data.frame(aneuploidyScore = plot_df$aneuploidyScore
+                , altStat = plot_df$altStat, gene = plot_df$gene))
+p_plot_df <- na.omit(data.frame(ploidy = plot_df$ploidy
+                , altStat = plot_df$altStat, gene = plot_df$gene))
 
-b <- readRDS("./data/metabric-brca/dgea-limma.rds")
+# custom p value text. uncomment to add custom p value
+# p1 <- bquote("P = " ~ '3' ~ 'x' ~ 10^-4)
+# p2 <- bquote("P = " ~ '4' ~ 'x' ~ 10^-4)
+# p3 <- bquote("P = " ~ '1' ~ 'x' ~ 10^-6)
+# p4 <- bquote("P = " ~ '4' ~ 'x' ~ 10^-5)
+for(i in c('Complex', 'NSMCE2')) {
+  pa[[i]] <- ggplot(a_plot_df[a_plot_df$gene == i,], aes(x=altStat, y= aneuploidyScore
+              , fill = altStat, colour = altStat))+
+    geom_flat_violin(position = position_nudge(x = .25, y = 0)
+          ,adjust = 2, trim = TRUE)+
+    geom_point(position = position_jitter(width = .15), size = .25)+
+    geom_boxplot(aes(x = as.numeric(altStat)+0.25, y = aneuploidyScore)
+          ,outlier.shape = NA, alpha = 0.3, width = .1, colour = "BLACK") +
+    ylab('Aneuploidy score') + xlab('') +
+    ylim(0,40) +
+    ggtitle(i) +
+    scale_colour_manual(values = colors) + scale_fill_manual(values = colors) +
+    theme_cowplot() +
+    # wilcox t test raw output. comment to add custom p value
+    stat_compare_means(method = "wilcox.test") + 
+    theme(plot.title = element_text(hjust = 0.5, size = 12, face = 'plain'))
+  # ploidy
+  pp[[i]] <- ggplot(p_plot_df[p_plot_df$gene == i,], aes(x=altStat, y= ploidy
+              , fill = altStat, colour = altStat))+
+    geom_flat_violin(position = position_nudge(x = .25, y = 0)
+          , adjust = 2, trim = TRUE) +
+    geom_point(position = position_jitter(width = .15), size = .25)+
+    geom_boxplot(aes(x = as.numeric(altStat)+0.25, y = ploidy)
+          , outlier.shape = NA, alpha = 0.3, width = .1, colour = "BLACK") +
+    ylab('Ploidy score') + xlab('') +
+    ylim(1,7) +
+    ggtitle(i) +
+    scale_colour_manual(values = colors) + scale_fill_manual(values = colors) + 
+    theme_cowplot() +
+    # wilcox t test raw output. comment to add custom p value
+    stat_compare_means(method = "wilcox.test") + 
+    theme(plot.title = element_text(hjust = 0.5, size = 12, face = 'plain'))
 
-breastVolcano <- rmbg(volcanoPlot(b))
+  if(i == 'Complex') {
+    # custom p value test. uncomment to add custom p value
+    # pa[[i]] <- pa[[i]] + annotate(geom="text", x=1.5, y=38, color="black", size = 4,label=p1)
+    # pp[[i]] <- pp[[i]] + annotate(geom="text", x=1.5, y=6.7, color="black", size = 4,label=p3)
+    pa[[i]] <- pa[[i]] + guides(fill = 'none', color = 'none')
+    pp[[i]] <- pp[[i]] + guides(fill = 'none', color = 'none')
+  } else {
+    # custom p value test. uncomment to add custom p value
+    # pa[[i]] <- pa[[i]] + annotate(geom="text", x=1.5, y=38, color="black", size = 4,label=p2)
+    # pp[[i]] <- pp[[i]] + annotate(geom="text", x=1.5, y=6.7, color="black", size = 4,label=p4)
+    pa[[i]] <- pa[[i]] + guides(color = 'none', fill=guide_legend(title="Status")) 
+    pp[[i]] <- pp[[i]] + guides(color = 'none', fill=guide_legend(title="Status")) 
+  }
+}
 
-pdf("./figures/fig4a.pdf", width = 6, height = 6, onefile = TRUE)
-plot(breastVolcano)
+pa <- ggarrange(pa[[1]], pa[[2]], ncol = 2, nrow = 1, widths = c(0.4, 0.6))
+pp <- ggarrange(pp[[1]], pp[[2]], ncol = 2, nrow = 1, widths = c(0.4, 0.6))
+
+pdf("./figures/fig3ab.pdf", width = 13, height = 5)
+plot(ggarrange(pa, pp, nrow = 1, ncol = 2, align = 'hv'))
 dev.off()
-
-b_mRNA <- readRDS("./data/metabric-brca/microarray-metagx.rds")
-b_mutation <- obtain_mut_from_mRNA(b_mRNA)
-b_mRNA <- b_mRNA[, rownames(b_mutation)]
-breastRainCloud <- rainCloudPlot(b_mRNA[top_genes, ], b_mutation, type = "microarray")
-p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 4, ncol = 2, align = "hv"))
-pdf("./figures/fig4b.pdf", width = 6, height = 12, onefile = TRUE)
-plot(p)
-dev.off()
-print("done")
