@@ -1,7 +1,9 @@
 # Large files reomved
-/data/*
-/reviewer-addressing/gdac.broadinstitute.org_BRCA.Mutation_Packager_Calls.Level_3.2016012800.0.0/*
-/reviewer-addressing/plot/*
+/data/
+/data/metabric-brca-metagx-download.rds/
+/data/tcga-prad-star-counts.rds/
+/data/tcga-ov/
+/data/tcga-mut/
 
 # History files
 .Rhistory

@@ -1,5 +1,4 @@
-# purpose: makes the dataframe for the alteration analysis of the complexes in the genes
-#complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+# purpose: makes the dataframe for the alteration analysis of the complexes in the genes + instability genes
 complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
 complexGenesDet <- paste0(complexGenes, "_det")
 instabilityGenes <- c("TP53", "BRCA1", "BRCA2", "NBN", "TTK", "AURKA", "PLK1",
@@ -17,14 +16,10 @@ library(data.table)
 # what to subset the oncoprint file to
 
 
-#df <- as.data.frame(data.table::fread("./data/cbioportal-oncoprint.tsv", header = TRUE))
 df <- as.data.frame(fread("./data/new_onco/PATIENT_DATA_oncoprint-2023-04-17.tsv",
                                     header = TRUE))
 df2 <- as.data.frame(fread("./data/new_onco/instability-genes-2023-04-17.tsv",
                                     header = TRUE))
-# df3 <- t(df2)
-# table(unlist(df3[, c(6,18,30)]))
-# stop()
 output_alt <- as.data.frame(matrix(nrow = 0, ncol = (27 + 2*length(complexGenes) + 2*length(instabilityGenes))))
 colnames(output_alt) <- c(
              "name", "study", "tissue", "tissue_detailed",
@@ -209,7 +204,6 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
         # NOTE: this was modified to remove teh mRNA and protein variations in cbioportal data
         foo <- df2[
                 df2$track_name == instabilityGenes[k] & df2$track_type %in% c("CNA", "MUTATIONS", "STRUCTURAL_VARIANT")
-                # df2$track_name == instabilityGenes[k] & df2$track_type %in% c("MUTATIONS")
                 , i]
 
         foo <- foo[foo != ""]
@@ -275,5 +269,80 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
 
 output_alt <- as.data.frame(output_alt)
 
-saveRDS(output_alt, "./reviewer-addressing/cbioportal/raw.rds")
-print("done")
+# saveRDS(output_alt, "./reviewer-addressing/cbioportal/raw.rds")
+# print("done")
+# 
+# 
+# df <- readRDS("./reviewer-addressing/cbioportal/raw.rds")
+df <- output_alt
+repeated_samples <- df$name[duplicated(df$name)]
+print(head(repeated_samples))
+print(length(repeated_samples))
+print(dim(df))
+print("checking for non-equivalent replicates")
+for (i in repeated_samples) {
+    temp_df <- df[df$name == i, ]
+    if (nrow(temp_df) == 1) next()
+    torm <- c()
+    for (j in 2:nrow(temp_df)) {
+        j_in_jmin1 <- sum(temp_df[j, ] %in% temp_df[j - 1, ])
+        jmin1_in_j <- sum(temp_df[j - 1, ] %in% temp_df[j, ])
+        if (j_in_jmin1 > jmin1_in_j) {
+            torm <- c(torm, j)
+        } else {
+            torm <- c(torm, j - 1)
+        }
+    }
+    temp_df <- temp_df[-torm, ]
+    if (nrow(temp_df) > 1) stop()
+    df <- df[df$name != i, ]
+    df <- rbind(df, temp_df[1, ])
+}
+print("deduplication done")
+print(dim(df))
+rownames(df) <- df$name
+#
+# purpose: format the data for analysis
+library(writexl)
+folder_check("./results/")
+cbpd <- df
+# only keep samples that have been profiled for mutation in the complex
+print(dim(cbpd))
+cbpd <- cbpd[cbpd$profiledmut == "Yes" | cbpd$profiledsv == "Yes" | cbpd$profiledcna == "Yes", ]
+print(dim(cbpd))
+# only keep studies with +20 cohort size
+studies <- table(cbpd$study)
+for (i in names(studies[studies < 20])) {
+    cbpd <- cbpd[cbpd$study != i, ]
+}
+print(dim(cbpd))
+# remove pediatric studies
+cbpd <- cbpd[-grep("Pediatric", cbpd$study, ignore.case = TRUE), ]
+print(dim(cbpd))
+
+# find the major cancer type of the samples
+tissue_types <- c(
+    "Breast", "Prostate", "Melanoma", "Ovarian", "Endometrial", "Lung", "Pancreatic", "Bladder",
+    "Hepatobiliary", "Esophagogastric"
+)
+cbpd$major <- "Other"
+for (i in tissue_types) {
+    cbpd$major[grep(i, cbpd$tissue, ignore.case = TRUE)] <- i
+    cbpd$major[grep(i, cbpd$tissue_detailed, ignore.case = TRUE)] <- i
+}
+
+# convert some important columns to numeric
+cbpd$PFT <- as.numeric(cbpd$PFT)
+cbpd$PFS <- as.numeric(cbpd$PFS)
+cbpd$age <- as.numeric(cbpd$age)
+cbpd$DFS <- as.numeric(cbpd$DFS)
+cbpd$DFT <- as.numeric(cbpd$DFT)
+cbpd$OVT <- as.numeric(cbpd$OVT)
+cbpd$OVS <- as.numeric(cbpd$OVS)
+cbpd$race <- as.factor(cbpd$race)
+cbpd$major <- factor(cbpd$major)
+cbpd$age <- as.numeric(cbpd$age)
+for (i in c("isalt", instabilityGenes, complexGenes)) {
+    cbpd[, i] <- as.numeric(cbpd[, i])
+}
+saveRDS(cbpd, "./reviewer-addressing/cbioportal/format_exOther.rds")

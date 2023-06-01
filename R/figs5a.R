@@ -22,9 +22,6 @@ doLimmma <- function(cbpd, design) {
 expmat <- readRDS("./data/metabric-brca/microarray-metagx.rds")
 samples <- colnames(expmat)
 cbpd <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
-# t <- cbpd[cbpd$isalt == 1, ]
-# t <- t[t$study == "Breast Invasive Carcinoma (TCGA, PanCancer Atlas)", ]
-# stop()
 rownames(cbpd) <- cbpd$name
 cbpd <- cbpd[cbpd$name %in% samples, ]
 expmat <- expmat[, colnames(expmat) %in% cbpd$name]
