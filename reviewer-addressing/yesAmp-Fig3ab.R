@@ -81,13 +81,13 @@ for (i in c("Complex", "NSMCE2")) {
         ylab("Aneuploidy score") +
         xlab("") +
         ylim(0, 40) +
-        ggtitle(i) +
+        ggtitle(ifelse(i == "Complex", "SMC5/6 Complex", i)) +
         scale_colour_manual(values = colors) +
         scale_fill_manual(values = colors) +
         theme_cowplot() +
         # wilcox t test raw output. comment to add custom p value
         stat_compare_means(method = "wilcox.test") +
-        theme(plot.title = element_text(hjust = 0.5, size = 12, face = "plain"))
+        theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"))
     # ploidy
     pp[[i]] <- ggplot(p_plot_df[p_plot_df$gene == i, ], aes(
         x = altStat, y = ploidy,
@@ -104,13 +104,13 @@ for (i in c("Complex", "NSMCE2")) {
         ylab("Ploidy score") +
         xlab("") +
         ylim(1, 7) +
-        ggtitle(i) +
+        ggtitle(ifelse(i == "Complex", "SMC5/6 Complex", i)) +
         scale_colour_manual(values = colors) +
         scale_fill_manual(values = colors) +
         theme_cowplot() +
         # wilcox t test raw output. comment to add custom p value
         stat_compare_means(method = "wilcox.test") +
-        theme(plot.title = element_text(hjust = 0.5, size = 12, face = "plain"))
+        theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold.italic"))
 
     if (i == "Complex") {
         pa[[i]] <- pa[[i]] + guides(fill = "none", color = "none")
