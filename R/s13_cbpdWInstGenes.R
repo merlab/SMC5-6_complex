@@ -345,4 +345,5 @@ cbpd$age <- as.numeric(cbpd$age)
 for (i in c("isalt", instabilityGenes, complexGenes)) {
     cbpd[, i] <- as.numeric(cbpd[, i])
 }
-saveRDS(cbpd, "./reviewer-addressing/cbioportal/format_exOther.rds")
+saveRDS(cbpd, "./data/cbioportal/cbpdDataWInst.rds")
+print("done")

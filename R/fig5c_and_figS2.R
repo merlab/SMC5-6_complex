@@ -14,14 +14,14 @@ library(ggraph)
 library(visNetwork)
 library(threejs)
 library(networkD3)
-source('./R/routine_tasks.R')
+source("./R/routine_tasks.R")
 set.seed(123)
-colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#cab2d6','#6a3d9a','#ffff99','#b15928')
+colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#cab2d6","#6a3d9a","#ffff99","#b15928")
 colors <- adjustcolor(colors, alpha = trans)
 
 # NOTE: making edge & node data.fames
 # TODO: fix names. never use PDF
-pathDf <- as.data.frame(readRDS('./data/metabric-brca/pathway-gsea.rds'))
+pathDf <- as.data.frame(readRDS("./data/metabric-brca/pathway-gsea.rds"))
 rownames(pathDf) <- pathDf$pathway
 pathDf <- pathDf[pathDf$padj < 0.01 & pathDf$pval < 0.01, ]
 nodes <- pathDf
@@ -32,8 +32,8 @@ nodes <- nodes[nodes$size <= max_path, ]
 s <- pathway_sentiment_ana(nodes$label)
 nodes$type  <- as.factor(s$category)
 # NOTE: pathway removed due to lack of data
-nodes <- nodes[nodes$type != 'Other', ]
-nodes <- nodes[nodes$type != 'MuscleCardiac', ]
+nodes <- nodes[nodes$type != "Other", ]
+nodes <- nodes[nodes$type != "MuscleCardiac", ]
 nodes$label <- make_label(nodes$label)
 nodes$color <- colors[as.factor(nodes$type)]
 # removing too small or large pathways
@@ -59,7 +59,7 @@ for(i in 1:(nrow(pathDf)-1)) {
   }
 }
 pathways_to_rm <- unique(pathways_to_rm)
-colnames(edges) <- c('from', 'to', 'width', 'weight')
+colnames(edges) <- c("from", "to", "width", "weight")
 edges$width <- as.numeric(edges$width)
 edges$weight <- as.numeric(edges$weight)
 edges <- edges[edges$weight > 0,]
@@ -83,7 +83,7 @@ fr2 <- layout_with_fr(net, niter = 5000, dim = 2)
 kk <- layout_with_kk(net)
 cs <- layout_with_graphopt(net, charge = 0.1, mass = 0.2, spring.length = 2, spring.constant = 0.1)
 
-pdf('./figures/fig4c.pdf', width = 6, height = 6)
+pdf("./figures/fig4c.pdf", width = 6, height = 6)
 par(mar = c(2,2,2,2))
 clp <- cluster_label_prop(net)
 clp$membership <- nodes$type
@@ -91,10 +91,10 @@ clp$membership <- nodes$type
 new_cols <- colors[membership(clp)]
 plot(clp
   , net
-  , col='grey70'
+  , col="grey70"
   , mark.border="grey70"
   , mark.col = unique(new_cols)
-  , edge.color = 'grey50'
+  , edge.color = "grey50"
   , vertex.label.cex = 0.1
   , layout = layout_nicely
   , remove.multiple = TRUE
@@ -106,26 +106,26 @@ plot(clp
 # Add labels
 types <- unique(as.factor(nodes$type))
 types <- as.character(types[order(as.numeric(types))])
-colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#cab2d6')
+colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#cab2d6")
 colors <- adjustcolor(colors, alpha = trans)
 types <- c(
-  DNA = 'DNA replication & repair'
-, Disease = 'Cancer-specific'
-, CellCycle = 'Cell Cyle-related'
-, Metabolism = 'Metabolic'
-, Signaling = 'Signaling'
-, ECM = 'Extracellular Matrix'
-, Immunity = 'Immune reaction'
+  DNA = "DNA replication & repair"
+, Disease = "Cancer-specific"
+, CellCycle = "Cell Cyle-related"
+, Metabolism = "Metabolic"
+, Signaling = "Signaling"
+, ECM = "Extracellular Matrix"
+, Immunity = "Immune reaction"
 )
 legend(x = -1.2, y = 1.1
      , types
      , col = colors
      , pt.bg = colors
      , pt.cex = 0.8, cex = 0.8, bty = "n", ncol = 1, pch = 21
-     , title = 'Pathway Category', title.cex = 1
+     , title = "Pathway Category", title.cex = 1
      )
 dev.off()
-print('fig4 igraph done')
+print("fig4 igraph done")
 x <- V(net)
 df <- data.frame(names = names(x), type = x$label)
 V(net)$label <- c(1:nrow(df))
@@ -135,7 +135,7 @@ set.seed(123)
 fr2 <- layout_with_fr(net, niter = 5000, dim = 2)
 kk <- layout_with_kk(net)
 cs <- layout_with_graphopt(net, charge = 0.1, mass = 0.2, spring.length = 2, spring.constant = 0.1)
-pdf('./figures/figS2a.pdf', width = 6, height = 6)
+pdf("./figures/figS2a.pdf", width = 6, height = 6)
 par(mar = c(2,2,2,2))
 clp <- cluster_label_prop(net)
 clp$membership <- nodes$type
@@ -143,12 +143,12 @@ clp$membership <- nodes$type
 new_cols <- colors[membership(clp)]
 plot(clp
   , net
-  , col='grey70'
+  , col="grey70"
   , mark.border="grey70"
   , mark.col = unique(new_cols)
-  , edge.color = 'grey50'
+  , edge.color = "grey50"
   , vertex.label.cex = 0.5
-  , vertex.label.color = 'black'
+  , vertex.label.color = "black"
   , layout = layout_nicely
   , remove.multiple = TRUE
   , remove.loops = TRUE
@@ -158,50 +158,50 @@ plot(clp
 # Add labels
 types <- unique(as.factor(nodes$type))
 types <- as.character(types[order(as.numeric(types))])
-colors <- c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#cab2d6')
+colors <- c("#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#cab2d6")
 colors <- adjustcolor(colors, alpha = trans)
 
 types <- c(
-  DNA = 'DNA replication & repair'
-, Disease = 'Cancer-specific'
-, CellCycle = 'Cell Cyle-related'
-, Metabolism = 'Metabolic'
-, Signaling = 'Signaling'
-, ECM = 'Extracellular Matrix'
-, Immunity = 'Immune reaction'
+  DNA = "DNA replication & repair"
+, Disease = "Cancer-specific"
+, CellCycle = "Cell Cyle-related"
+, Metabolism = "Metabolic"
+, Signaling = "Signaling"
+, ECM = "Extracellular Matrix"
+, Immunity = "Immune reaction"
 )
 legend(x = -1.2, y = 1.1
      , types
      , col = colors
      , pt.bg = colors
      , pt.cex = 0.8, cex = 0.8, bty = "n", ncol = 1, pch = 21
-     , title = 'Pathway Category', title.cex = 1
+     , title = "Pathway Category", title.cex = 1
      )
 dev.off()
 
 
 
-pdf('./figures/figS2b.pdf', width = 20, height = 20)
+pdf("./figures/figS2b.pdf", width = 20, height = 20)
 
 types <- c(
-  DNA = 'DNA replication & repair'
-, Disease = 'Cancer-specific'
-, CellCycle = 'Cell Cyle-related'
-, Metabolism = 'Metabolic'
-, Signaling = 'Signaling'
-, ECM = 'Extracellular Matrix'
-, Immunity = 'Immune reaction'
+  DNA = "DNA replication & repair"
+, Disease = "Cancer-specific"
+, CellCycle = "Cell Cyle-related"
+, Metabolism = "Metabolic"
+, Signaling = "Signaling"
+, ECM = "Extracellular Matrix"
+, Immunity = "Immune reaction"
 )
 # format type column name
-df$'Pathway Name' <- df$names
-df$'Pathway Type' <- types[df$type]
-df$'Enrichment Score' <- pathDf[df$names, 'ES']
-df$'-log10FDR' <- -log10(pathDf[df$names, 'padj'])
-df$'Pathway Name' <- gsub('_', ' ', df$'Pathway Name')
+df$"Pathway Name" <- df$names
+df$"Pathway Type" <- types[df$type]
+df$"Enrichment Score" <- pathDf[df$names, "ES"]
+df$"-log10FDR" <- -log10(pathDf[df$names, "padj"])
+df$"Pathway Name" <- gsub("_", " ", df$"Pathway Name")
 df$names <- NULL; df$type <- NULL
 tt2 <- ttheme_default(core=list(fg_params=list(hjust=0, x=0)),
                       rowhead=list(fg_params=list(hjust=0, x=0)))
 grid.table(df, theme = tt2)
 dev.off()
 
-print('done')
+print("done")

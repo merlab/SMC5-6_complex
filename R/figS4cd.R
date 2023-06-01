@@ -9,12 +9,12 @@ library(survminer)
 library(survival)
 library(dplyr)
 library(cowplot)
-source('./R/R_rainclouds.R')
+source("./R/R_rainclouds.R")
 dir <- getwd()
 source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
-colors <- c('#DE3B1C','#707176')
+colors <- c("#DE3B1C","#707176")
 
 KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, strata = FALSE) {
 
@@ -35,25 +35,25 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
         , conf.int = TRUE
         , pval = FALSE
         , palette = colors
-        , xlab = '' 
-        , ylab = ifelse(ylab, "Probability of overall survival",'')
+        , xlab = "" 
+        , ylab = ifelse(ylab, "Probability of overall survival","")
         , title = title
-        , legend.title='Status'
+        , legend.title="Status"
         , legend = c(.85,.25)
-        , legend.labs = c('Altered', 'Wild')
+        , legend.labs = c("Altered", "Wild")
         , risk.table = TRUE
         , axes.offset = FALSE
         , risk.table.height = 0.22
   ) 
   ggsurv$table <- ggrisktable(fit
         , data = sur_df
-        , ylab = ''
-        , xlab = ifelse(xlab, "Time (Months)", '')
-        , risk.table.title = ''
+        , ylab = ""
+        , xlab = ifelse(xlab, "Time (Months)", "")
+        , risk.table.title = ""
         # add color 
         , palette = colors
-        , color = 'strata'
-        , legend = 'none'
+        , color = "strata"
+        , legend = "none"
         , axes.offset = TRUE
         , tables.theme = theme_classic()
         , fontsize = 3.25
@@ -61,7 +61,7 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
         # NEEDED TO GET THE RISK TABLE CORRECTLY
         , break.time.by = 40
         , xlim = c(0,160)
-  ) + scale_y_discrete(labels = c('Wild', 'Altered')) +
+  ) + scale_y_discrete(labels = c("Wild", "Altered")) +
       theme(axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),
             legend.text = element_blank(),
@@ -75,11 +75,11 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
   ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0,170), breaks = seq(0, 160, 40)) # 
   if(signif(p.val,1) == 0.01) {
     print(p.val)
-    p.val_text <- bquote("P = " ~ '0.01')
+    p.val_text <- bquote("P = " ~ "0.01")
   }
   if(signif(p.val,1) == 8e-4) {
     print(p.val)
-    p.val_text <- bquote("P = " ~ '8' ~ 'x' ~ 10^-4)
+    p.val_text <- bquote("P = " ~ "8" ~ "x" ~ 10^-4)
   }
   ggsurv$plot <- ggsurv$plot + annotate(
       geom="text", x=30, y=0.1,
@@ -95,7 +95,7 @@ KM_survival_plot <- function(sur_df, colors, title, xlab = TRUE, ylab = TRUE, st
 ###################
 ###### PART 2 #####
 ###################
-studies <- c('Prostate Adenocarcinoma (TCGA, PanCancer Atlas)')
+studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # columns used for analysis
 cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
@@ -117,7 +117,7 @@ for (current_study in studies) {
 
       sur_df$OVS <- as.numeric(sur_df$OVS)
       sur_df$group <- as.numeric(sur_df$group)
-      sur_df$group <- ifelse(sur_df$group == 1, 'Altered', "Wild") #namecol
+      sur_df$group <- ifelse(sur_df$group == 1, "Altered", "Wild") #namecol
       # The top row are for breast cancer, the bottom row is for prostate cancer. #
       sur_dfs[[paste(current_study,namecol)]] <- na.omit(sur_df)
       titles[[paste(current_study, namecol)]] <- namecol
@@ -134,4 +134,4 @@ arrange_ggsurvplots(p,
   nrow = 1
 )
 dev.off()
-print('done')
+print("done")

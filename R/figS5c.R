@@ -35,11 +35,10 @@ p <- ggplot(df, aes(x = ES, y = pathway, size = size, color = logFDR)) +
         axis.text.y = element_text(size = 10),
         legend.position = "bottom",
         legend.box = "vertical",
-        panel.background = element_rect(fill = "transparent", color = NA) # bg of the panel
-        , plot.background = element_rect(fill = "transparent", color = NA) # bg of the plot
-        , legend.background = element_rect(fill = "transparent", color = NA) # get rid of legend bg
-        , legend.box.background = element_rect(fill = "transparent", color = NA) # get rid of legend panel bg
+        panel.background = element_rect(fill = "transparent", color = NA), # bg of the panel
+        plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+        legend.background = element_rect(fill = "transparent", color = NA), # get rid of legend bg
+        legend.box.background = element_rect(fill = "transparent", color = NA) # get rid of legend panel bg
     )
 plot(p)
 dev.off()
-

@@ -106,31 +106,8 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
     return(PLOT)
 }
 
-cbpd <- readRDS("./reviewer-addressing/cbioportal/format_exOther.rds")
+cbpd <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
 instabilityGenes <- names(sort(colSums(cbpd[, instabilityGenes])))
-
-cancerTypes <- c("All", unique(levels(cbpd$major)))
-cancerTypes <- cancerTypes[cancerTypes != "Other"]
-
-cancerTypes <- c(
-    "Breast",
-    "Ovarian",
-    "Prostate"
-)
-print(cancerTypes)
-l <- list()
-p <- list()
-plotdfs <- data.frame()
-pdf("./reviewer-addressing/plot/co-mutation.pdf", height = 9, width = 13, onefile = TRUE)
-
-
-for (cancerType in cancerTypes) {
-    print(cancerType)
-    subcbpd <- cbpd[cbpd$major == cancerType, ]
-    subcbpd <- subcbpd[, c(complexGenes, instabilityGenes)]
-    plot(generatePlotDf(subcbpd, cancerType, color = colors, bgcolor = bgcolor))
-}
-dev.off()
 
 pdf("./figures/fig3b.pdf", height = 9, width = 15, onefile = TRUE)
 plot(generatePlotDf(cbpd, "All", color = colors, bgcolor = bgcolor))

@@ -148,8 +148,7 @@ p <- (
         )
 )
 p <- rmbg(p)
-# pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 6)
-pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 8)
+pdf("./figures/figS5a.pdf", height = 6, width = 8)
 plot(p)
 dev.off()
 # # if you want to save the raw results:

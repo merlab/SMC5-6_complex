@@ -9,13 +9,13 @@ library(survminer)
 library(survival)
 library(dplyr)
 library(cowplot)
-source('./R/R_rainclouds.R')
+source("./R/R_rainclouds.R")
 dir <- getwd()
 source("./R/routine_tasks.R")
 genes <- c("NSMCE2", "Complex")
 tissue <- "Prostate"
 #colors <- c("#CB3814", "#3361BD")
-colors <- c('#DE3B1C','#707176')
+colors <- c("#DE3B1C","#707176")
 
 
 df <- readRDS("./data/cbioportal/formatted.rds")
@@ -44,11 +44,11 @@ p_plot_df <- na.omit(data.frame(ploidy = plot_df$ploidy
 print(max(plot_df$ploidy, na.rm = TRUE))
 print(max(plot_df$aneuploidyScore, na.rm = TRUE))
 
-p1 <- bquote("P = " ~ '1' ~ 'x' ~ 10^-7)
-p2 <- bquote("P = " ~ '3' ~ 'x' ~ 10^-7)
-p3 <- bquote("P = " ~ '2' ~ 'x' ~ 10^-5)
-p4 <- bquote("P = " ~ '8' ~ 'x' ~ 10^-3)
-for(i in c('Complex', 'NSMCE2')) {
+p1 <- bquote("P = " ~ "1" ~ "x" ~ 10^-7)
+p2 <- bquote("P = " ~ "3" ~ "x" ~ 10^-7)
+p3 <- bquote("P = " ~ "2" ~ "x" ~ 10^-5)
+p4 <- bquote("P = " ~ "8" ~ "x" ~ 10^-3)
+for(i in c("Complex", "NSMCE2")) {
   pa[[i]] <- ggplot(a_plot_df[a_plot_df$gene == i,], aes(x=altStat, y= aneuploidyScore
               , fill = altStat, colour = altStat))+
     geom_flat_violin(position = position_nudge(x = .25, y = 0)
@@ -56,13 +56,13 @@ for(i in c('Complex', 'NSMCE2')) {
     geom_point(position = position_jitter(width = .15), size = .25)+
     geom_boxplot(aes(x = as.numeric(altStat)+0.25, y = aneuploidyScore)
           ,outlier.shape = NA, alpha = 0.3, width = .1, colour = "BLACK") +
-    ylab('Aneuploidy score') + xlab('') +
+    ylab("Aneuploidy score") + xlab("") +
     ylim(0,30) +
     ggtitle(i) +
     scale_colour_manual(values = colors) + scale_fill_manual(values = colors) +
     # stat_compare_means(method = "wilcox.test") + 
     theme_cowplot() +
-    theme(plot.title = element_text(hjust = 0.5, size = 12, face = 'plain'))
+    theme(plot.title = element_text(hjust = 0.5, size = 12, face = "plain"))
   # ploidy
   pp[[i]] <- ggplot(p_plot_df[p_plot_df$gene == i,], aes(x=altStat, y= ploidy
               , fill = altStat, colour = altStat))+
@@ -71,24 +71,24 @@ for(i in c('Complex', 'NSMCE2')) {
     geom_point(position = position_jitter(width = .15), size = .25)+
     geom_boxplot(aes(x = as.numeric(altStat)+0.25, y = ploidy)
           , outlier.shape = NA, alpha = 0.3, width = .1, colour = "BLACK") +
-    ylab('Ploidy score') + xlab('') +
+    ylab("Ploidy score") + xlab("") +
     ylim(1,6) +
     ggtitle(i) +
     scale_colour_manual(values = colors) + scale_fill_manual(values = colors) + 
     theme_cowplot() +
     # stat_compare_means(method = "wilcox.test") + 
-    theme(plot.title = element_text(hjust = 0.5, size = 12, face = 'plain'))
+    theme(plot.title = element_text(hjust = 0.5, size = 12, face = "plain"))
 
-  if(i == 'Complex') {
+  if(i == "Complex") {
     pa[[i]] <- pa[[i]] + annotate(geom="text", x=1.5, y=28, color="black", size = 4,label=p1)
     pp[[i]] <- pp[[i]] + annotate(geom="text", x=1.5, y=5.7, color="black", size = 4,label=p3)
-    pa[[i]] <- pa[[i]] + guides(fill = 'none', color = 'none')
-    pp[[i]] <- pp[[i]] + guides(fill = 'none', color = 'none')
+    pa[[i]] <- pa[[i]] + guides(fill = "none", color = "none")
+    pp[[i]] <- pp[[i]] + guides(fill = "none", color = "none")
   } else {
     pa[[i]] <- pa[[i]] + annotate(geom="text", x=1.5, y=28, color="black", size = 4,label=p2)
     pp[[i]] <- pp[[i]] + annotate(geom="text", x=1.5, y=5.7, color="black", size = 4,label=p4)
-    pa[[i]] <- pa[[i]] + guides(color = 'none', fill=guide_legend(title="Status")) 
-    pp[[i]] <- pp[[i]] + guides(color = 'none', fill=guide_legend(title="Status")) 
+    pa[[i]] <- pa[[i]] + guides(color = "none", fill=guide_legend(title="Status")) 
+    pp[[i]] <- pp[[i]] + guides(color = "none", fill=guide_legend(title="Status")) 
   }
 }
 
@@ -98,7 +98,7 @@ pp <- ggarrange(pp[[1]], pp[[2]], ncol = 2, nrow = 1, widths = c(0.4, 0.6))
 ###################
 ###### PART 2 #####
 ###################
-studies <- c('Prostate Adenocarcinoma (TCGA, PanCancer Atlas)')
+studies <- c("Prostate Adenocarcinoma (TCGA, PanCancer Atlas)")
 # columns used for analysis
 cols <- c(isalt = "Complex", NSMCE2 = "NSMCE2")
 # color of the plot
@@ -120,7 +120,7 @@ for (current_study in studies) {
 
       sur_df$OVS <- as.numeric(sur_df$OVS)
       sur_df$group <- as.numeric(sur_df$group)
-      sur_df$group <- ifelse(sur_df$group == 1, 'Altered', "Wild") #namecol
+      sur_df$group <- ifelse(sur_df$group == 1, "Altered", "Wild") #namecol
       # The top row are for breast cancer, the bottom row is for prostate cancer. #
       sur_dfs[[paste(current_study,namecol)]] <- na.omit(sur_df)
       titles[[paste(current_study, namecol)]] <- namecol
@@ -129,7 +129,7 @@ for (current_study in studies) {
 }
 
 pdf("./figures/figS4ab.pdf", width = 13, height = 5)
-plot(ggarrange(pa, pp, nrow = 1, ncol = 2, align = 'hv'))
+plot(ggarrange(pa, pp, nrow = 1, ncol = 2, align = "hv"))
 dev.off()
 
-print('done')
+print("done")
