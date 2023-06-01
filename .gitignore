@@ -1,9 +1,10 @@
 # Large files reomved
-/data/
-/data/metabric-brca-metagx-download.rds/
-/data/tcga-prad-star-counts.rds/
-/data/tcga-ov/
-/data/tcga-mut/
+/data/metabric-brca-metagx-download.rds
+/data/tcga-prad-star-counts.rds
+/data/tcga-ov/*
+/data/tcga-mut/*
+/data/tcga-prad/*
+/data/metabric-brca/*
 
 # History files
 .Rhistory
