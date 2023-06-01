@@ -155,23 +155,14 @@ p <- rmbg(p)
 pdf("./reviewer-addressing/plot/lfc.pdf", height = 6, width = 8)
 plot(p)
 dev.off()
-
-colnames(mergeRes) <- gsub("\\.x$", "-SMC5-6", colnames(mergeRes))
-colnames(mergeRes) <- gsub("\\.y$", "-instability", colnames(mergeRes))
-print(dim(mergeRes))
-mergeRes <- mergeRes[, -grep("^t-", colnames(mergeRes))]
-print(dim(mergeRes))
-mergeRes <- mergeRes[, -grep("^logFDR", colnames(mergeRes))]
-print(dim(mergeRes))
-mergeRes <- mergeRes[, -grep("^B-", colnames(mergeRes))]
-print(dim(mergeRes))
-mergeRes <- mergeRes[, -grep("^Sig-", colnames(mergeRes))]
-print(dim(mergeRes))
-# table(mergeRes$bothSig) / nrow(mergeRes) * 100
+# # if you want to save the raw results:
+# colnames(mergeRes) <- gsub("\\.x$", "-SMC5-6", colnames(mergeRes))
+# colnames(mergeRes) <- gsub("\\.y$", "-instability", colnames(mergeRes))
+# mergeRes <- mergeRes[, -grep("^t-", colnames(mergeRes))]
+# mergeRes <- mergeRes[, -grep("^logFDR", colnames(mergeRes))]
+# mergeRes <- mergeRes[, -grep("^B-", colnames(mergeRes))]
+# mergeRes <- mergeRes[, -grep("^Sig-", colnames(mergeRes))]
+# dim(mergeRes[mergeRes$bothSig == "Both", ])
 # table(mergeRes$bothSig)
-# 100 - (84 / (2176 + 84) * 100)
-dim(mergeRes[mergeRes$bothSig == "Both", ])
-table(mergeRes$bothSig)
-write_xlsx(mergeRes, "./reviewer-addressing/METABRIC-lfc-analysis.xlsx")
+# write_xlsx(mergeRes, "./reviewer-addressing/METABRIC-lfc-analysis.xlsx")
 print("done")
-head(mergeRes[mergeRes$gene == "RAD54B", ])
