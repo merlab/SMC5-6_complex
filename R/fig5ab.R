@@ -79,7 +79,7 @@ b <- readRDS("./data/metabric-brca/dgea-limma.rds")
 
 breastVolcano <- rmbg(volcanoPlot(b))
 
-pdf("./figures/fig4a.pdf", width = 6, height = 6, onefile = TRUE)
+pdf("./figures/fig5a.pdf", width = 6, height = 6, onefile = TRUE)
 plot(breastVolcano)
 dev.off()
 
@@ -88,7 +88,7 @@ b_mutation <- obtain_mut_from_mRNA(b_mRNA)
 b_mRNA <- b_mRNA[, rownames(b_mutation)]
 breastRainCloud <- rainCloudPlot(b_mRNA[top_genes, ], b_mutation, type = "microarray")
 p <- rmbg(ggarrange(plotlist = breastRainCloud[-5], nrow = 4, ncol = 2, align = "hv"))
-pdf("./figures/fig4b.pdf", width = 6, height = 12, onefile = TRUE)
+pdf("./figures/fig5b.pdf", width = 6, height = 12, onefile = TRUE)
 plot(p)
 dev.off()
 print("done")

@@ -37,7 +37,7 @@ cbpd$instabilityScore <- as.numeric(cbpd$instabilityScore)
 cbpd$instabilityScore <- ifelse(cbpd$instabilityScore >= instabilityT, "Unstable", "Stable")
 # cbpd$instabilityScore <- ifelse(cbpd$instabilityScore > instabilityT, "Unstable", "Stable")
 cbpd$instabilityScore <- factor(cbpd$instabilityScore, levels = c("Stable", "Unstable"))
-print(table(cbpd$instabilityScore))
+# print(table(cbpd$instabilityScore))
 # complex
 er <- as.numeric(cbpd$isalt)
 design <- model.matrix(~er)

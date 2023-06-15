@@ -89,6 +89,6 @@ for(i in c("Complex", "NSMCE2")) {
 pa <- ggarrange(pa[[1]], pa[[2]], ncol = 2, nrow = 1, widths = c(0.4, 0.6))
 pp <- ggarrange(pp[[1]], pp[[2]], ncol = 2, nrow = 1, widths = c(0.4, 0.6))
 
-pdf("./figures/fig3ab.pdf", width = 13, height = 5)
+pdf("./figures/fig4ab.pdf", width = 13, height = 5)
 plot(ggarrange(pa, pp, nrow = 1, ncol = 2, align = "hv"))
 dev.off()

@@ -83,7 +83,7 @@ fr2 <- layout_with_fr(net, niter = 5000, dim = 2)
 kk <- layout_with_kk(net)
 cs <- layout_with_graphopt(net, charge = 0.1, mass = 0.2, spring.length = 2, spring.constant = 0.1)
 
-pdf("./figures/fig4c.pdf", width = 6, height = 6)
+pdf("./figures/fig5c.pdf", width = 6, height = 6)
 par(mar = c(2,2,2,2))
 clp <- cluster_label_prop(net)
 clp$membership <- nodes$type
