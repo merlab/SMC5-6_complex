@@ -9,9 +9,14 @@ library(tidyr)
 # library(cooccur)
 complexGenes <- c("NSMCE2", "SMC6", "SMC5", "NSMCE1", "NSMCE3", "NSMCE4A", "EID3")
 complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3")
+# instabilityGenes <- c(
+#     "TP53", "BRCA1", "BRCA2", "NBN", "TTK", "AURKA", "PLK1",
+#     "CHEK2", "CCNE1", "RB1", "RECQL4", "BLM", "MYC"
+# )
+
 instabilityGenes <- c(
-    "TP53", "BRCA1", "BRCA2", "NBN", "TTK", "AURKA", "PLK1",
-    "CHEK2", "CCNE1", "RB1", "RECQL4", "BLM"
+    "PLK1", "TTK", "CHEK2", "BLM", "AURKA", "BRCA1", "CCNE1", "NBN",
+    "RECQL4", "BRCA2", "RB1", "TP53", "MYC"
 )
 bgcolor <- "#F8F2E4"
 colors <- c("#00A9D7", "#6E7C7C", "#e41a1c", "#1CD0BB")
@@ -47,10 +52,11 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
     print(range(d$fdr))
     print(d[which(d$fdr == min(d$fdr)), ])
     print("")
-    print(d[which(d$instability == "TP53"), ])
-    print(range(d$fp[which(d$instability == "TP53")]))
+    # print(d[which(d$instability == "TP53"), ])
+    print(d[which(d$instability == "MYC"), ])
+    # print(range(d$fp[which(d$instability == "TP53")]))
     print("")
-    print(d[which(d$complex == "NSMCE2" & d$instability == "TP53"), ])
+    # print(d[which(d$complex == "NSMCE2" & d$instability == "TP53"), ])
 
     x <- pivot_longer(d, c("tp", "tn", "fp", "fn"))
     p <- list()
@@ -107,7 +113,10 @@ generatePlotDf <- function(subcbpd, cancerType, color, bgcolor) {
 }
 
 cbpd <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
-instabilityGenes <- names(sort(colSums(cbpd[, instabilityGenes])))
+# sorting the genes
+# instabilityGenes <- names(sort(colSums(cbpd[, instabilityGenes])))
+
+
 
 pdf("./figures/fig3b.pdf", height = 9, width = 15, onefile = TRUE)
 plot(generatePlotDf(cbpd, "All", color = colors, bgcolor = bgcolor))

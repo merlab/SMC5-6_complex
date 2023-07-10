@@ -20,13 +20,17 @@ df <- as.data.frame(fread("./data/new_onco/PATIENT_DATA_oncoprint-2023-04-17.tsv
                                     header = TRUE))
 df2 <- as.data.frame(fread("./data/new_onco/instability-genes-2023-04-17.tsv",
                                     header = TRUE))
-output_alt <- as.data.frame(matrix(nrow = 0, ncol = (27 + 2*length(complexGenes) + 2*length(instabilityGenes))))
+df3 <- as.data.frame(fread("./data/new_onco/myc-2023-07-03.tsv",
+                                    header = TRUE))
+# output_alt <- as.data.frame(matrix(nrow = 0, ncol = (27 + 2*length(complexGenes) + 2*length(instabilityGenes))))
+output_alt <- as.data.frame(matrix(nrow = 0, ncol = (29 + 2*length(complexGenes) + 2*length(instabilityGenes))))
 colnames(output_alt) <- c(
              "name", "study", "tissue", "tissue_detailed",
              "age", "sex", "OVS", "OVT", "PFS", "PFT", "DFS", "DFT",
              "histology", "grade", "stage",
-             "isalt", complexGenes, complexGenesDet, 
+             "isalt", complexGenes, complexGenesDet,
              "instabilityScore", instabilityGenes, instabilityGenesDet,
+             "MYC", "MYC_det",
              "aneuploidyScore", "ploidy",
              "ntherapy", "rtherapy", "race",
              "profiledmut", "profiledsv", "profiledcna",
@@ -221,6 +225,26 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
     }
     instabilityScore <- sum(instabilitySum)
 
+    ### MYC gene
+
+        # this takes all the available alteration info for a gene
+        # if anything is altered it would consider the gene altered
+        # NOTE: this was modified to remove teh mRNA and protein variations in cbioportal data
+    MYC <- 0
+    MYC_det <- ""
+    foo <- df3[
+            df3$track_name == "MYC" & df3$track_type %in% c("CNA", "MUTATIONS", "STRUCTURAL_VARIANT")
+            , i]
+    foo <- foo[foo != ""]
+    if (length(foo) == 0) {
+        foo <- ""
+    }
+    foo <- paste(as.vector(foo), collapse = ";", sep = ";")
+    if (foo %in% c(";;", ";", "")) foo <- ""
+    foo <- gsub(";;", ";", foo)
+    MYC <- ifelse(foo == "", 0, 1)
+    MYC_det <- foo
+
 
     # progress bar
     if (i %% 1000 == 0) {
@@ -253,6 +277,8 @@ output_alt <- foreach(i = 3:ncol(df), .combine = "rbind") %dopar% {
              instabilityScore = instabilityScore,
              instabilitySum,
              instabilitySumDet,
+             MYC = MYC,
+             MYC_det = MYC_det,
              # rest of stuff
              aneuploidyScore = aneuploidyScore,
              ploidy = ploidy,
@@ -342,7 +368,7 @@ cbpd$OVS <- as.numeric(cbpd$OVS)
 cbpd$race <- as.factor(cbpd$race)
 cbpd$major <- factor(cbpd$major)
 cbpd$age <- as.numeric(cbpd$age)
-for (i in c("isalt", instabilityGenes, complexGenes)) {
+for (i in c("isalt", instabilityGenes, complexGenes, "MYC")) {
     cbpd[, i] <- as.numeric(cbpd[, i])
 }
 saveRDS(cbpd, "./data/cbioportal/cbpdDataWInst.rds")
