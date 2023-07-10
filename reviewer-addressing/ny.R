@@ -5,20 +5,54 @@ library(ggplot2)
 library(survminer)
 library(survival)
 # columns used for analysis
+complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3", "SLF1", "SLF2")
+complexGenesDet <- paste0(complexGenes, "_det")
 cols <- c("isalt", "NSMCE2")
 # color of the plot
 ref_df <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
+table(ref_df$NSMCE2, ref_df$MYC)
 ref_df$OVT <- as.numeric(ref_df$OVT)
 ref_df$OVS <- as.numeric(ref_df$OVS)
 # ref_df <- ref_df[ref_df$major == "Breast", ]
 # ref_df <- ref_df[ref_df$major != "Other", ]
-table(ref_df$NSMCE2, ref_df$MYC)
-ref_df[ref_df$NSMCE2 == 1 & ref_df$MYC == 0, ]
+# table(ref_df$NSMCE2, ref_df$MYC)
+# ref_df[ref_df$NSMCE2 == 1 & ref_df$MYC == 0, ]
 
 for (i in cols) {
     ref_df[, i] <- ifelse(ref_df[, i] == 1, "Altered", "Wild-type")
     ref_df[, i] <- factor(ref_df[, i], levels = c("Altered", "Wild-type"))
 }
+
+
+
+isalt_det <- apply(ref_df, 1, function(x) {
+    v <- x[complexGenesDet]
+    v <- gsub(" \\(putative passenger\\)", "", v)
+    v <- tolower(v)
+    v <- v[!duplicated(v)]
+    v <- paste(v, collapse = ";")
+    v <- gsub(";;", ";", v)
+    v <- gsub(";;", ";", v)
+    v <- gsub(";;", ";", v)
+    v <- gsub(";;", ";", v)
+    v <- gsub("^;", "", v)
+    v <- gsub(";$", "", v)
+    v <- gsub("amplification;amplification", "amplification", v)
+    v <- gsub(" \\(putative passenger\\)", "", v)
+})
+# print(table(isalt_det))
+
+ref_df$isalt_det <- isalt_det
+# ref_df$isalt_det <- gsub("(putative passenger)", "", ref_df$isalt_det)
+
+
+ref_df$isaltNew <- NA
+ref_df$isaltNew[-grep("amplification", ref_df$isalt_det, ignore.case = TRUE)] <- "Mutation"
+ref_df$isaltNew[ref_df$isalt_det == ""] <- "Wild-type"
+ref_df$isaltNew[ref_df$isalt_det == "amplification"] <- "Amplification"
+ref_df$isaltNew <- factor(ref_df$isaltNew, levels = c("Wild-type", "Amplification", "Mutation"))
+x <- ref_df[!is.na(ref_df$OVS), ]
+print(table(x$isaltNew, x$MYC))
 
 # code taken from:
 # https://stackoverflow.com/questions/3483203/create-a-boxplot-in-r-that-labels-a-box-with-the-sample-size-n
@@ -46,13 +80,15 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     ggsurv <-
         ggsurvplot(fit,
             conf.int = TRUE,
+            censor = FALSE,
             pval = FALSE,
             # palette = colors,
             xlab = "",
             ylab = "Probability of overall survival",
             title = title,
             legend.title = "Status",
-            legend = c(.85, .4),
+            # legend = c(.85, .4),
+            legend = c(.85, .85),
             # legend.labs = c("Altered", "Wild"),
             risk.table = TRUE,
             axes.offset = FALSE,
@@ -124,7 +160,7 @@ raw_df <- ref_df
 
 
 
-pdf("./reviewer-addressing/fig4cd-mycMut-metabric.pdf", width = 5, height = 5)
+pdf("./reviewer-addressing/mycKMS-final.pdf", width = 5, height = 5)
 
 tryCatch(expr = {
     df <- ref_df
@@ -134,9 +170,10 @@ tryCatch(expr = {
     print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - all", censor = FALSE))
     print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - all", censor = TRUE))
     sur_df$group <- sur_df$NSMCE2
-    # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = FALSE))
-    # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = TRUE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = TRUE))
 }, error = function(cond) message(cond))
+
 
 
 tryCatch(expr = {
@@ -147,50 +184,35 @@ tryCatch(expr = {
     print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - all", censor = FALSE))
     print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - all", censor = TRUE))
     sur_df$group <- sur_df$NSMCE2
-    # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = FALSE))
-    # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = TRUE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = TRUE))
 }, error = function(cond) message(cond))
 
-for (i in unique(raw_df$major)) {
-    tryCatch(expr = {
-        df <- raw_df[raw_df$major == i, ]
-        df <- df[df$MYC == 1, ]
-        sur_df <- df
-        sur_df$group <- sur_df$isalt
-        print(KM_survival_plot(sur_df = sur_df, title = paste("SMC5/6 complex - MYC altered", i), censor = FALSE))
-        # print(KM_survival_plot(sur_df = sur_df, title = paste("SMC5/6 complex - MYC altered", i), censor = TRUE))
-    }, error = function(cond) message(cond))
 
-    # tryCatch(expr = {
-    #     df <- raw_df[raw_df$major == i, ]
-    #     df <- df[df$MYC == 1, ]
-    #     sur_df <- df
-    #     sur_df$group <- sur_df$NSMCE2
-    #     # print(KM_survival_plot(sur_df = sur_df, title = paste("NSMCE2 - MYC altered", i), censor = FALSE))
-    #     # print(KM_survival_plot(sur_df = sur_df, title = paste("NSMCE2 - MYC altered", i), censor = TRUE))
-    # }, error = function(cond) message(cond))
+tryCatch(expr = {
+    df <- raw_df[raw_df$major == "Breast", ]
+    df <- df[df$MYC == 1, ]
+    sur_df <- df
+    sur_df$group <- sur_df$isalt
+    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - Breast", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - Breast", censor = TRUE))
+    sur_df$group <- sur_df$NSMCE2
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - Breast", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - Breast", censor = TRUE))
+}, error = function(cond) message(cond))
 
-    tryCatch(expr = {
-        df <- raw_df[raw_df$major == i, ]
-        df <- df[df$MYC == 0, ]
-        sur_df <- df
-        sur_df$group <- sur_df$isalt
-        print(KM_survival_plot(sur_df = sur_df, title = paste("SMC5/6 complex - MYC WT", i), censor = FALSE))
-        # print(KM_survival_plot(sur_df = sur_df, title = paste("SMC5/6 complex - MYC WT", i), censor = TRUE))
-    }, error = function(cond) message(cond))
-    # tryCatch(expr = {
-    #     df <- raw_df[raw_df$major == i, ]
-    #     df <- df[df$MYC == 0, ]
-    #     sur_df <- df
-    #     sur_df$group <- sur_df$NSMCE2
-    #     # print(ggsurvplot(survfit(Surv(OVT, OVS) ~ group, data = sur_df)))
-    #     # sur_df$OVS[sur_df$OVT > 60] <- 0
-    #     # sur_df$OVT[sur_df$OVT > 60] <- 60
-    #     # print(ggsurvplot(survfit(Surv(OVT, OVS) ~ group, data = sur_df)))
-    #     print(KM_survival_plot(sur_df = sur_df, title = paste("NSMCE2 - MYC WT", i), censor = FALSE))
-    #     # print(KM_survival_plot(sur_df = sur_df, title = paste("NSMCE2 - MYC WT", i), censor = TRUE))
-    # }, error = function(cond) message(cond))
-}
+
+tryCatch(expr = {
+    df <- raw_df[raw_df$major == "Breast", ]
+    df <- df[df$MYC == 0, ]
+    sur_df <- df
+    sur_df$group <- sur_df$isalt
+    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - Breast", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - Breast", censor = TRUE))
+    sur_df$group <- sur_df$NSMCE2
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - Breast", censor = FALSE))
+    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - Breast", censor = TRUE))
+}, error = function(cond) message(cond))
 
 dev.off()
 print("done")

@@ -9,9 +9,6 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
         sur_df$OVS[sur_df$OVT > 60] <- 0
         sur_df$OVT[sur_df$OVT > 60] <- 60
     }
-    # gr <- table(sur_df$isalt_det)
-    # gr <- sort(gr, decreasing = TRUE)
-    # print(gr)
 
     diff <- survdiff(Surv(OVT, OVS) ~ group, data = sur_df)
     p.val <- 1 - pchisq(diff$chisq, length(diff$n) - 1)
@@ -118,14 +115,6 @@ cols <- c(isalt_det = "Complex_det")
 # color of the plot
 ref_df <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
 
-
-
-# stop()
-
-
-table(ref_df$NSMCE2_det)
-
-
 isalt_det <- apply(ref_df, 1, function(x) {
     v <- x[complexGenesDet]
     v <- gsub(" \\(putative passenger\\)", "", v)
@@ -141,64 +130,21 @@ isalt_det <- apply(ref_df, 1, function(x) {
     v <- gsub("amplification;amplification", "amplification", v)
     v <- gsub(" \\(putative passenger\\)", "", v)
 })
-# print(table(isalt_det))
 
 ref_df$isalt_det <- isalt_det
-# ref_df$isalt_det <- gsub("(putative passenger)", "", ref_df$isalt_det)
 
 
 ref_df$group <- NA
 ref_df$group[-grep("amplification", ref_df$isalt_det, ignore.case = TRUE)] <- "Mutation"
 ref_df$group[ref_df$isalt_det == ""] <- "Wild-type"
 ref_df$group[ref_df$isalt_det == "amplification"] <- "Amplification"
-# ref_df$group[grepl("Amplification", ref_df$isalt_det)] <- "Amplification"
-# sur_df$group[grepl("missense", ref_df$col, ignore.case = TRUE)] <- "Missense"
-# ref_df$group[grepl("mutation", ref_df$isalt_det, ignore.case = TRUE)] <- "Mutation"
-# ref_df$group[grepl("Deletion", ref_df$isalt_det, ignore.case = TRUE)] <- "Deletion"
-# ref_df$group[grepl("splice", ref_df$isalt_det, ignore.case = TRUE)] <- "Splice"
-# ref_df$group[grepl("sv", ref_df$isalt_det)] <- "SV"
-
-# ref_df$group <- factor(ref_df$group, levels = c("Wild-type", "Amplification", "Mutation", "Deletion", "Splice", "SV"))
 ref_df$group <- factor(ref_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
 
-pdf("./reviewer-addressing/km-simple.pdf", width = 4.5, height = 4.5)
-
-
-# sur_df <- ref_df
-# print(KM_survival_plot(sur_df = sur_df, title = "all"))
-#
-#
-# for (i in unique(ref_df$major)) {
-#     print(i)
-#     df <- ref_df[ref_df$major == i, ]
-#     df <- df[grep("TCGA", df$study), ]
-#     tryCatch(expr = {
-#         sur_df <- df
-#         print(KM_survival_plot(sur_df = sur_df, title = i))
-#     }, error = function(cond) message(cond))
-# }
-#
-# # tissues <- unique(ref_df$tissue[which(ref_df$group == "SV")])
-# #
-#
-# #
-# tryCatch(expr = {
-#     df <- ref_df[grep("TCGA", ref_df$study), ]
-#     print(KM_survival_plot(sur_df = df, title = "all TCGA"))
-# }, error = function(cond) message(cond))
-#
-# tryCatch(expr = {
-#     df <- ref_df[grep("METABRIC", ref_df$study, ignore.case = TRUE), ]
-#     print(KM_survival_plot(sur_df = df, title = "all METABRIC"))
-# }, error = function(cond) message(cond))
-# #
-# #
+pdf("./reviewer-addressing/km.pdf", width = 5, height = 5)
 
 df <- ref_df
-# df <- ref_df[grep("METABRIC|TCGA|China|PLoS|SMC|Archived,|BCGSC|CPTAC|Broad|Sanger", ref_df$study, ignore.case = TRUE), ]
 df <- df[df$major == "Breast", ]
 print(table(df$study))
-# title <- "all breast"
 title <- ""
 tryCatch(expr = {
     sur_df <- df[df$group != "Amplification", ]
