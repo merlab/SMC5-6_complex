@@ -61,10 +61,11 @@ print(table(x$isaltNew, x$MYC))
 # libs
 
 KM_survival_plot <- function(sur_df, title, censor = TRUE) {
-    # colors <- c("#DE3B1C", "#707176")
+    colors <- c("#DE3B1C", "#707176")
     gc()
     # censoring function
     if (censor == TRUE) {
+        sur_df <- sur_df[!is.na(sur_df$OVS) & !is.na(sur_df$OVT), ]
         sur_df$OVS[sur_df$OVT > 60] <- 0
         sur_df$OVT[sur_df$OVT > 60] <- 60
     }
@@ -77,19 +78,20 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     fit <- survfit(Surv(OVT, OVS) ~ group, data = sur_df)
     # https://stat.ethz.ch/pipermail/r-help/2007-April/130676.html
     # survival plot
+    legend.labs <- c("Altered", "Wild")
     ggsurv <-
         ggsurvplot(fit,
             conf.int = TRUE,
             censor = FALSE,
             pval = FALSE,
-            # palette = colors,
+            palette = colors,
             xlab = "",
             ylab = "Probability of overall survival",
             title = title,
             legend.title = "Status",
             # legend = c(.85, .4),
             legend = c(.85, .85),
-            # legend.labs = c("Altered", "Wild"),
+            legend.labs = legend.labs,
             risk.table = TRUE,
             axes.offset = FALSE,
             risk.table.height = 0.22
@@ -99,7 +101,7 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         ylab = "",
         xlab = "Time (Months)",
         risk.table.title = "",
-        # palette = colors,
+        palette = colors,
         color = "strata",
         legend = "none",
         axes.offset = TRUE,
@@ -108,7 +110,7 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         risk.table.col = "strata"
         # NEEDED TO GET THE RISK TABLE CORRECTLY
         , break.time.by = ifelse(censor, 10, 50)
-    ) +
+    ) + scale_y_discrete(labels = legend.labs) +
         theme(
             axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),

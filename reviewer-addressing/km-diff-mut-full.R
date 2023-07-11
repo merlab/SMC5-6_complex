@@ -52,6 +52,8 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
         data = sur_df,
         ylab = "",
         xlab = ifelse(xlab, "Time (Months)", ""),
+                palette = colors,
+
         risk.table.title = "",
         axes.offset = TRUE,
         tables.theme = theme_classic(),

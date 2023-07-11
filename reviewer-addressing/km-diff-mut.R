@@ -34,7 +34,8 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
 
     ggsurv <-
         ggsurvplot(fit,
-            conf.int = FALSE,
+            # conf.int = FALSE,
+            conf.int = TRUE,
             pval = FALSE,
             censor = FALSE,
             palette = colors,
