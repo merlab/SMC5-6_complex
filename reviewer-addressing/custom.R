@@ -77,12 +77,16 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         # censorT <- 250
         censorT <- 250
         # censorT <- 240
+        # censorT <- 240
         censorInt <- 50
         sur_df$OVS[sur_df$OVT >= censorT] <- 0
         sur_df$OVT[sur_df$OVT >= censorT] <- censorT
     }
 
-    diff <- survdiff(Surv(OVT, OVS) ~ group, data = sur_df)
+    x <- sur_df
+        x$OVS[x$OVT >= 240] <- 0
+        x$OVT[x$OVT >= 240] <- 240
+    diff <- survdiff(Surv(OVT, OVS) ~ group, data = x)
     p.val <- 1 - pchisq(diff$chisq, length(diff$n) - 1)
     p.val_text <- paste("P = ", signif(p.val, 2))
     print(p.val)
@@ -96,8 +100,8 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     x <- na.omit(x)
     x <- length(x)
     if (x == 2) {
-        # legend.labs <- c("Wild-type", "Amplification") # , "Mutation")
-        legend.labs <- c("Not amplified", "Amplified")
+        legend.labs <- c("Wild-type", "Amplification") # , "Mutation")
+        # legend.labs <- c("Not amplified", "Amplified")
         colors <- c("#707176", "#DE3B1C") # , "#377eb8")
     }
     if (x == 3) {
@@ -150,8 +154,8 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     ggsurv$plot <- ggsurv$plot + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     if (censor == TRUE) {
-        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt), censorT))
-        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt), censorT))
+        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt)))
+        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt)))
     }
     # else {
     #     ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
@@ -161,6 +165,14 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         print(p.val)
         p.val_text <- bquote("P = " ~ "1.7" ~ "x" ~ 10^"-5")
     }
+    # if (signif(p.val, 2) == 1.3e-5) {
+    #     print(p.val)
+    #     p.val_text <- bquote("P = " ~ "1.3" ~ "x" ~ 10^"-5")
+    # }
+    # if (signif(p.val, 2) == 1.3e-5) {
+    #     print(p.val)
+    #     p.val_text <- bquote("P = " ~ "1.3" ~ "x" ~ 10^"-5")
+    # }
 
     ggsurv$plot <- ggsurv$plot + annotate(
         geom = "text",
@@ -178,8 +190,6 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
 
 
 
-
-
 raw_df <- raw_df
 # raw_df$MYC <- as.numeric(grepl("amp_rec", raw_df$MYC_det))
 
@@ -187,22 +197,24 @@ pdf("./reviewer-addressing/custom.pdf", width = 5, height = 5)
 
 df <- raw_df
 df <- df[df$major == "Breast", ]
-# df <- df[grep("amp", df$MYC_det), ]
+df <- df[grep("amp", df$MYC_det), ]
 sur_df <- df
 table(sur_df$NSMCE2_det)
-sur_df$group <- ifelse(grepl("amp", sur_df$NSMCE2_det, ignore.case = TRUE), "Amplified", "Not amplified")
-sur_df$group <- factor(sur_df$group, levels = c("Not amplified", "Amplified"))
+# sur_df$group <- ifelse(grepl("amp", sur_df$NSMCE2_det, ignore.case = TRUE), "Amplified", "Not amplified")
+# sur_df$group <- factor(sur_df$group, levels = c("Not amplified", "Amplified"))
 
-# sur_df$group <- NA
-# sur_df$group[-grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Mutation"
-# sur_df$group[sur_df$NSMCE2_det == ""] <- "Wild-type"
-# sur_df$group[grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Amplification"
-# sur_df$group <- factor(sur_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
+sur_df$group <- NA
+sur_df$group[-grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Mutation"
+sur_df$group[sur_df$NSMCE2_det == ""] <- "Wild-type"
+sur_df$group[grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Amplification"
+sur_df$group <- factor(sur_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
 # print(table(grepl("amp", sur_df$MYC_det), sur_df$group))
 # sur_df <- sur_df[grep("amp", sur_df$MYC_det), ]
-# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
-# sur_df <- sur_df[sur_df$group != "Mutation", ]
-print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
+# # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
+print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - Breast", censor = TRUE))
+sur_df <- sur_df[sur_df$group != "Mutation", ]
+print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - Breast", censor = TRUE))
+# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - all Breast", censor = TRUE))
 
 dev.off()
 print("done")
