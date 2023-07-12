@@ -91,14 +91,13 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     fit <- survfit(Surv(OVT, OVS) ~ group, data = sur_df)
     # https://stat.ethz.ch/pipermail/r-help/2007-April/130676.html
     # survival plot
-    # legend.labs <- c("Altered", "Wild")
-    # legend.labs <- c("Amplified", "Not amplified")
 
     x <- unique(as.character(sur_df$group))
     x <- na.omit(x)
     x <- length(x)
     if (x == 2) {
-        legend.labs <- c("Wild-type", "Amplification") # , "Mutation")
+        # legend.labs <- c("Wild-type", "Amplification") # , "Mutation")
+        legend.labs <- c("Not amplified", "Amplified")
         colors <- c("#707176", "#DE3B1C") # , "#377eb8")
     }
     if (x == 3) {
@@ -158,9 +157,9 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     #     ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     #     ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     # }
-    if (signif(p.val, 1) == 1e-6) {
+    if (signif(p.val, 2) == 1.7e-5) {
         print(p.val)
-        p.val_text <- bquote("p = " ~ "1" ~ "x" ~ 10^-6)
+        p.val_text <- bquote("P = " ~ "1.7" ~ "x" ~ 10^"-5")
     }
 
     ggsurv$plot <- ggsurv$plot + annotate(
@@ -191,18 +190,18 @@ df <- df[df$major == "Breast", ]
 # df <- df[grep("amp", df$MYC_det), ]
 sur_df <- df
 table(sur_df$NSMCE2_det)
-# sur_df$group <- ifelse(grepl("amp", sur_df$NSMCE2_det, ignore.case = TRUE), "Amplified", "Other")
+sur_df$group <- ifelse(grepl("amp", sur_df$NSMCE2_det, ignore.case = TRUE), "Amplified", "Not amplified")
+sur_df$group <- factor(sur_df$group, levels = c("Not amplified", "Amplified"))
 
-sur_df$group <- NA
-sur_df$group[-grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Mutation"
-sur_df$group[sur_df$NSMCE2_det == ""] <- "Wild-type"
-sur_df$group[grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Amplification"
-sur_df$group <- factor(sur_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
-print(table(grepl("amp", sur_df$MYC_det), sur_df$group))
-sur_df <- sur_df[grep("amp", sur_df$MYC_det), ]
-# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = FALSE))
-print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
-sur_df <- sur_df[sur_df$group != "Mutation", ]
+# sur_df$group <- NA
+# sur_df$group[-grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Mutation"
+# sur_df$group[sur_df$NSMCE2_det == ""] <- "Wild-type"
+# sur_df$group[grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Amplification"
+# sur_df$group <- factor(sur_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
+# print(table(grepl("amp", sur_df$MYC_det), sur_df$group))
+# sur_df <- sur_df[grep("amp", sur_df$MYC_det), ]
+# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
+# sur_df <- sur_df[sur_df$group != "Mutation", ]
 print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
 
 dev.off()

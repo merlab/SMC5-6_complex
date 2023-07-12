@@ -11,22 +11,28 @@ colors <- c("#DE3B1C", "#707176")
 # read data
 df <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
 df <- df[grepl("amp", df$MYC_det), ]
-df$Complex <- df$isalt
-
-pa <- list()
-pp <- list()
 sDf <- df[
     grep(tissue, df$tissue, ignore.case = TRUE),
     c(gene, "aneuploidyScore", "ploidy")
 ]
+
+pa <- list()
+pp <- list()
 plot_df <- data.frame(
-    gene = gene,
     aneuploidyScore = as.numeric(sDf$aneuploidyScore),
     ploidy = as.numeric(sDf$ploidy),
-    altStat = sDf[, gene]
+    geneDet = sDf[, gene]
 )
-# plot_df$altStat <- as.factor(ifelse(plot_df$altStat == "1", "Altered", "Wild"))
-plot_df$altStat <- ifelse(grepl("amp", plot_df$altStat, ignore.case = TRUE), "Amplified", "Not Amplified")
+# v1
+plot_df$altStat <- ifelse(grepl("amp", plot_df$geneDet, ignore.case = TRUE), "Amplified", "Not amplified")
+print(dim(plot_df))
+
+# plot_df$altStat <- NA
+# plot_df$altStat <- ifelse(grepl("amp", plot_df$geneDet, ignore.case = TRUE), "Amplified", "Mutated")
+# plot_df$altStat[plot_df$geneDet == ""] <- "Wild-type"
+# plot_df <- plot_df[plot_df$altStat != "Mutated", ]
+
+table(plot_df$altStat)
 a_plot_df <- na.omit(data.frame(
     aneuploidyScore = plot_df$aneuploidyScore,
     altStat = plot_df$altStat, gene = plot_df$gene
@@ -52,7 +58,6 @@ pa <- ggplot(a_plot_df, aes(
     ylab("Aneuploidy score") +
     xlab("") +
     ylim(0, 40) +
-    ggtitle(i) +
     scale_colour_manual(values = colors) +
     scale_fill_manual(values = colors) +
     theme_cowplot() +
@@ -75,7 +80,6 @@ pp <- ggplot(p_plot_df, aes(
     ylab("Ploidy score") +
     xlab("") +
     ylim(1, 7) +
-    ggtitle(i) +
     scale_colour_manual(values = colors) +
     scale_fill_manual(values = colors) +
     theme_cowplot() +
@@ -83,10 +87,10 @@ pp <- ggplot(p_plot_df, aes(
     stat_compare_means(method = "wilcox.test") +
     theme(plot.title = element_text(hjust = 0.5, size = 12, face = "plain"))
 # custom p value test. uncomment to add custom p value
-# pa[[i]] <- pa[[i]] + annotate(geom="text", x=1.5, y=38, color="black", size = 4,label=p2)
-# pp[[i]] <- pp[[i]] + annotate(geom="text", x=1.5, y=6.7, color="black", size = 4,label=p4)
-pa <- pa + guides(color = "none", fill = "none")
-pp <- pp + guides(color = "none", fill = guide_legend(title = "Status"))
+pa <- pa + annotate(geom = "text", x = 1.5, y = 38, color = "black", size = 4, label = "P = 0.25")
+pp <- pp + annotate(geom = "text", x = 1.5, y = 6.7, color = "black", size = 4, label = "P = 0.48")
+pa <- pa + guides(color = "none", fill = guide_legend(title = "NSMCE2"))
+pp <- pp + guides(color = "none", fill = guide_legend(title = "NSMCE2"))
 
 
 
