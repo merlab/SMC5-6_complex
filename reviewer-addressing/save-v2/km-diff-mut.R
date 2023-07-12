@@ -34,7 +34,8 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
 
     ggsurv <-
         ggsurvplot(fit,
-            conf.int = FALSE,
+            # conf.int = FALSE,
+            conf.int = TRUE,
             pval = FALSE,
             censor = FALSE,
             palette = colors,
@@ -42,40 +43,42 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
             ylab = ifelse(ylab, "Probability of overall survival", ""),
             title = title,
             legend.title = "Status",
+            # legend = c(.85, .4),
             legend = c(.85, .2),
+            # legend.labs = c("Altered", "Wild"),
             legend.labs = legend.labs,
-            risk.table = TRUE,
+            # risk.table = TRUE,
             axes.offset = FALSE,
-            risk.table.height = 0.22
+            # risk.table.height = 0.22
         )
-    ggsurv$table <- ggrisktable(fit,
-        data = sur_df,
-        ylab = "",
-        xlab = ifelse(xlab, "Time (Months)", ""),
-        palette = colors,
-        risk.table.title = "",
-        axes.offset = TRUE,
-        tables.theme = theme_classic(),
-        fontsize = 3.25,
-        # NEEDED TO GET THE RISK TABLE CORRECTLY
-        break.time.by = ifelse(censor, 10, 50)
-    ) + scale_y_discrete(labels = rev(legend.labs)) +
-        theme(
-            axis.text.x = element_text(size = 12),
-            axis.title.x = element_text(size = 12),
-            axis.title.y = element_text(size = 12),
-            legend.text = element_blank(),
-            legend.title = element_blank()
-        )
-    ggsurv$plot <- ggsurv$plot + theme(axis.text.x = element_blank())
+    # ggsurv$table <- ggrisktable(fit,
+    #     data = sur_df,
+    #     ylab = "",
+    #     xlab = ifelse(xlab, "Time (Months)", ""),
+    #     risk.table.title = "",
+    #     axes.offset = TRUE,
+    #     tables.theme = theme_classic(),
+    #     fontsize = 3.25,
+    #     # NEEDED TO GET THE RISK TABLE CORRECTLY
+    #     break.time.by = ifelse(censor, 10, 50)
+    # ) + # scale_y_discrete(labels = c("Wild", "Altered")) +
+    #     theme(
+    #         axis.text.x = element_text(size = 12),
+    #         axis.title.x = element_text(size = 12),
+    #         axis.title.y = element_text(size = 12),
+    #         legend.text = element_blank(),
+    #         legend.title = element_blank()
+    #     )
+    ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12))
+    # ggsurv$plot <- ggsurv$plot + theme(axis.text.x = element_blank())
     ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12))
     ggsurv$plot <- ggsurv$plot + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
-    ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
+    # ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     if (censor == TRUE) {
-        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 65), breaks = seq(0, 60, 10))
+        # ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 65), breaks = seq(0, 60, 10))
         ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 65), breaks = seq(0, 60, 10))
     } else {
-        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
+        # ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
         ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     }
 
@@ -138,8 +141,7 @@ ref_df$group[ref_df$isalt_det == ""] <- "Wild-type"
 ref_df$group[ref_df$isalt_det == "amplification"] <- "Amplification"
 ref_df$group <- factor(ref_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
 
-pdf("./reviewer-addressing/km-full.pdf", width = 5, height = 5)
-
+pdf("./reviewer-addressing/km.pdf", width = 5, height = 5)
 
 df <- ref_df
 df <- df[df$major == "Breast", ]

@@ -51,8 +51,8 @@ ref_df$isaltNew[-grep("amplification", ref_df$isalt_det, ignore.case = TRUE)] <-
 ref_df$isaltNew[ref_df$isalt_det == ""] <- "Wild-type"
 ref_df$isaltNew[ref_df$isalt_det == "amplification"] <- "Amplification"
 ref_df$isaltNew <- factor(ref_df$isaltNew, levels = c("Wild-type", "Amplification", "Mutation"))
-# x <- ref_df[!is.na(ref_df$OVS), ]
-# print(table(x$isaltNew, x$MYC))
+x <- ref_df[!is.na(ref_df$OVS), ]
+print(table(x$isaltNew, x$MYC))
 
 # code taken from:
 # https://stackoverflow.com/questions/3483203/create-a-boxplot-in-r-that-labels-a-box-with-the-sample-size-n
@@ -66,16 +66,10 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     # censoring function
     if (censor == TRUE) {
         sur_df <- sur_df[!is.na(sur_df$OVS) & !is.na(sur_df$OVT), ]
-        censorT <- 60
-        censorInt <- 10
-        # censorT <- 240
-        # censorInt <- 40
-        # censorT <- 200
-        # censorInt <- 40
-        # censorT <- 180
-        # censorInt <- 30
-        sur_df$OVS[sur_df$OVT >= censorT] <- 0
-        sur_df$OVT[sur_df$OVT >= censorT] <- censorT
+        # censorT <- 60
+        censorT <- 240
+        sur_df$OVS[sur_df$OVT > censorT] <- 0
+        sur_df$OVT[sur_df$OVT > censorT] <- censorT
     }
 
     diff <- survdiff(Surv(OVT, OVS) ~ group, data = sur_df)
@@ -97,6 +91,7 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
             ylab = "Probability of overall survival",
             title = title,
             legend.title = "Status",
+            # legend = c(.85, .4),
             legend = c(.85, .85),
             legend.labs = legend.labs,
             risk.table = TRUE,
@@ -114,11 +109,10 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         axes.offset = TRUE,
         tables.theme = theme_classic(),
         fontsize = 3.25,
-        risk.table.col = "strata",
+        risk.table.col = "strata"
         # NEEDED TO GET THE RISK TABLE CORRECTLY
-        # break.time.by = ifelse(censor, 10, 50)
-        break.time.by = ifelse(censor, censorInt, 50)
-    ) + scale_y_discrete(labels = rev(legend.labs)) +
+        , break.time.by = ifelse(censor, 10, 50)
+    ) + scale_y_discrete(labels = legend.labs) +
         theme(
             axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),
@@ -128,27 +122,24 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         )
     ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12))
     ggsurv$plot <- ggsurv$plot + theme(axis.text.x = element_blank())
+    ggsurv$plot <- ggsurv$plot + theme(plot.title = element_text(hjust = 0.5, size = 12))
     ggsurv$plot <- ggsurv$plot + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     if (censor == TRUE) {
-        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, censorT + 5), breaks = seq(0, censorT, censorInt))
-        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, censorT + 5), breaks = seq(0, censorT, censorInt))
+        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 65), breaks = seq(0, 60, 10))
+        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 65), breaks = seq(0, 60, 10))
+    } else {
+        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
+        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     }
-    # else {
-    #     ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
-    #     ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
-    # }
     if (signif(p.val, 1) == 1e-6) {
         print(p.val)
         p.val_text <- bquote("p = " ~ "1" ~ "x" ~ 10^-6)
     }
 
     ggsurv$plot <- ggsurv$plot + annotate(
-        geom = "text",
-        x = ifelse(censor, censorInt, 50),
-        y = 0.1,
-        color = "black",
-        size = 3,
+        geom = "text", x = ifelse(censor, 10, 50), y = 0.1,
+        color = "black", size = 3,
         label = p.val_text
     )
     # this is to bring risk table up
@@ -163,8 +154,15 @@ sur_dfs <- list()
 titles <- list()
 
 
+
+
+
+
 raw_df <- ref_df
 # raw_df$MYC <- as.numeric(grepl("amp_rec", raw_df$MYC_det))
+
+
+
 
 pdf("./reviewer-addressing/mycKMS-final.pdf", width = 5, height = 5)
 
@@ -222,6 +220,3 @@ tryCatch(expr = {
 
 dev.off()
 print("done")
-
-table(raw_df$MYC, raw_df$NSMCE2)
-nrow(raw_df[raw_df$MYC == 1 & raw_df$NSMCE2 == "Altered", ])

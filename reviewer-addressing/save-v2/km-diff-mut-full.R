@@ -52,14 +52,15 @@ KM_survival_plot <- function(sur_df, title, xlab = TRUE, ylab = TRUE, strata = F
         data = sur_df,
         ylab = "",
         xlab = ifelse(xlab, "Time (Months)", ""),
-        palette = colors,
+                palette = colors,
+
         risk.table.title = "",
         axes.offset = TRUE,
         tables.theme = theme_classic(),
         fontsize = 3.25,
         # NEEDED TO GET THE RISK TABLE CORRECTLY
         break.time.by = ifelse(censor, 10, 50)
-    ) + scale_y_discrete(labels = rev(legend.labs)) +
+    ) + scale_y_discrete(labels = legend.labs) +
         theme(
             axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),
