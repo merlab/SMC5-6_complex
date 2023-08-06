@@ -9,23 +9,22 @@ complexGenes <- c("SMC5", "SMC6", "NSMCE1", "NSMCE2", "NSMCE3", "NSMCE4A", "EID3
 complexGenesDet <- paste0(complexGenes, "_det")
 cols <- c("isalt", "NSMCE2")
 # color of the plot
-ref_df <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
-table(ref_df$NSMCE2, ref_df$MYC)
-ref_df$OVT <- as.numeric(ref_df$OVT)
-ref_df$OVS <- as.numeric(ref_df$OVS)
+raw_df <- readRDS("./data/cbioportal/cbpdDataWInst.rds")
+table(raw_df$NSMCE2, raw_df$MYC)
+raw_df$OVT <- as.numeric(raw_df$OVT)
+raw_df$OVS <- as.numeric(raw_df$OVS)
 # ref_df <- ref_df[ref_df$major == "Breast", ]
 # ref_df <- ref_df[ref_df$major != "Other", ]
 # table(ref_df$NSMCE2, ref_df$MYC)
 # ref_df[ref_df$NSMCE2 == 1 & ref_df$MYC == 0, ]
 
-for (i in cols) {
-    ref_df[, i] <- ifelse(ref_df[, i] == 1, "Altered", "Wild-type")
-    ref_df[, i] <- factor(ref_df[, i], levels = c("Altered", "Wild-type"))
-}
+# for (i in cols) {
+#     raw_df[, i] <- ifelse(raw_df[, i] == 1, "Altered", "Wild-type")
+#     raw_df[, i] <- factor(raw_df[, i], levels = c("Altered", "Wild-type"))
+# }
 
 
-
-isalt_det <- apply(ref_df, 1, function(x) {
+isalt_det <- apply(raw_df, 1, function(x) {
     v <- x[complexGenesDet]
     v <- gsub(" \\(putative passenger\\)", "", v)
     v <- tolower(v)
@@ -42,15 +41,15 @@ isalt_det <- apply(ref_df, 1, function(x) {
 })
 # print(table(isalt_det))
 
-ref_df$isalt_det <- isalt_det
+raw_df$isalt_det <- isalt_det
 # ref_df$isalt_det <- gsub("(putative passenger)", "", ref_df$isalt_det)
 
 
-ref_df$isaltNew <- NA
-ref_df$isaltNew[-grep("amplification", ref_df$isalt_det, ignore.case = TRUE)] <- "Mutation"
-ref_df$isaltNew[ref_df$isalt_det == ""] <- "Wild-type"
-ref_df$isaltNew[ref_df$isalt_det == "amplification"] <- "Amplification"
-ref_df$isaltNew <- factor(ref_df$isaltNew, levels = c("Wild-type", "Amplification", "Mutation"))
+raw_df$isaltNew <- NA
+raw_df$isaltNew[-grep("amplification", raw_df$isalt_det, ignore.case = TRUE)] <- "Mutation"
+raw_df$isaltNew[raw_df$isalt_det == ""] <- "Wild-type"
+raw_df$isaltNew[raw_df$isalt_det == "amplification"] <- "Amplification"
+raw_df$isaltNew <- factor(raw_df$isaltNew, levels = c("Wild-type", "Amplification", "Mutation"))
 # x <- ref_df[!is.na(ref_df$OVS), ]
 # print(table(x$isaltNew, x$MYC))
 
@@ -66,27 +65,50 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     # censoring function
     if (censor == TRUE) {
         sur_df <- sur_df[!is.na(sur_df$OVS) & !is.na(sur_df$OVT), ]
-        censorT <- 60
-        censorInt <- 10
+        # censorT <- 60
+        # censorInt <- 10
         # censorT <- 240
         # censorInt <- 40
         # censorT <- 200
         # censorInt <- 40
         # censorT <- 180
         # censorInt <- 30
+        #
+        # censorT <- 250
+        censorT <- 250
+        # censorT <- 240
+        # censorT <- 240
+        censorInt <- 50
         sur_df$OVS[sur_df$OVT >= censorT] <- 0
         sur_df$OVT[sur_df$OVT >= censorT] <- censorT
     }
 
-    diff <- survdiff(Surv(OVT, OVS) ~ group, data = sur_df)
+    x <- sur_df
+        x$OVS[x$OVT >= 240] <- 0
+        x$OVT[x$OVT >= 240] <- 240
+    diff <- survdiff(Surv(OVT, OVS) ~ group, data = x)
     p.val <- 1 - pchisq(diff$chisq, length(diff$n) - 1)
     p.val_text <- paste("P = ", signif(p.val, 2))
+    print(p.val)
 
     fit <- NA
     fit <- survfit(Surv(OVT, OVS) ~ group, data = sur_df)
     # https://stat.ethz.ch/pipermail/r-help/2007-April/130676.html
     # survival plot
-    legend.labs <- c("Altered", "Wild")
+
+    x <- unique(as.character(sur_df$group))
+    x <- na.omit(x)
+    x <- length(x)
+    if (x == 2) {
+        legend.labs <- c("Wild-type", "Amplification") # , "Mutation")
+        # legend.labs <- c("Not amplified", "Amplified")
+        colors <- c("#707176", "#DE3B1C") # , "#377eb8")
+    }
+    if (x == 3) {
+        legend.labs <- c("Wild-type", "Amplification", "Mutation")
+
+        colors <- c("#707176", "#DE3B1C", "#377eb8")
+    }
     ggsurv <-
         ggsurvplot(fit,
             conf.int = TRUE,
@@ -118,7 +140,8 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
         # NEEDED TO GET THE RISK TABLE CORRECTLY
         # break.time.by = ifelse(censor, 10, 50)
         break.time.by = ifelse(censor, censorInt, 50)
-    ) + scale_y_discrete(labels = rev(legend.labs)) +
+    ) +
+        scale_y_discrete(labels = rev(legend.labs)) +
         theme(
             axis.text.x = element_text(size = 12),
             axis.title.x = element_text(size = 12),
@@ -131,17 +154,25 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
     ggsurv$plot <- ggsurv$plot + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     ggsurv$table <- ggsurv$table + theme(plot.margin = unit(c(5, 5, 0, 5), "points"))
     if (censor == TRUE) {
-        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, censorT + 5), breaks = seq(0, censorT, censorInt))
-        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, censorT + 5), breaks = seq(0, censorT, censorInt))
+        ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt)))
+        ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, censorT), breaks = c(seq(0, censorT, censorInt)))
     }
     # else {
     #     ggsurv$table <- ggsurv$table + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     #     ggsurv$plot <- ggsurv$plot + scale_x_continuous(limits = c(0, 360), breaks = seq(0, 350, 50))
     # }
-    if (signif(p.val, 1) == 1e-6) {
+    if (signif(p.val, 2) == 1.7e-5) {
         print(p.val)
-        p.val_text <- bquote("p = " ~ "1" ~ "x" ~ 10^-6)
+        p.val_text <- bquote("P = " ~ "1.7" ~ "x" ~ 10^"-5")
     }
+    # if (signif(p.val, 2) == 1.3e-5) {
+    #     print(p.val)
+    #     p.val_text <- bquote("P = " ~ "1.3" ~ "x" ~ 10^"-5")
+    # }
+    # if (signif(p.val, 2) == 1.3e-5) {
+    #     print(p.val)
+    #     p.val_text <- bquote("P = " ~ "1.3" ~ "x" ~ 10^"-5")
+    # }
 
     ggsurv$plot <- ggsurv$plot + annotate(
         geom = "text",
@@ -159,69 +190,35 @@ KM_survival_plot <- function(sur_df, title, censor = TRUE) {
 
 
 
-sur_dfs <- list()
-titles <- list()
-
-
-raw_df <- ref_df
+raw_df <- raw_df
 # raw_df$MYC <- as.numeric(grepl("amp_rec", raw_df$MYC_det))
 
-pdf("./reviewer-addressing/mycKMS-final.pdf", width = 5, height = 5)
+pdf("./reviewer-addressing/q1.pdf", width = 5, height = 5)
 
-tryCatch(expr = {
-    df <- ref_df
-    df <- df[df$MYC == 1, ]
-    sur_df <- df
-    sur_df$group <- sur_df$isalt
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - all", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - all", censor = TRUE))
-    sur_df$group <- sur_df$NSMCE2
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - all", censor = TRUE))
-}, error = function(cond) message(cond))
+df <- raw_df
+df <- df[df$major == "Breast", ]
+df <- df[grep("amp", df$MYC_det), ]
+sur_df <- df
+table(sur_df$NSMCE2_det)
+# sur_df$group <- ifelse(grepl("amp", sur_df$NSMCE2_det, ignore.case = TRUE), "Amplified", "Not amplified")
+# sur_df$group <- factor(sur_df$group, levels = c("Not amplified", "Amplified"))
 
-
-
-tryCatch(expr = {
-    df <- ref_df
-    df <- df[df$MYC == 0, ]
-    sur_df <- df
-    sur_df$group <- sur_df$isalt
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - all", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - all", censor = TRUE))
-    sur_df$group <- sur_df$NSMCE2
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - all", censor = TRUE))
-}, error = function(cond) message(cond))
-
-
-tryCatch(expr = {
-    df <- raw_df[raw_df$major == "Breast", ]
-    df <- df[df$MYC == 1, ]
-    sur_df <- df
-    sur_df$group <- sur_df$isalt
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - Breast", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC altered - Breast", censor = TRUE))
-    sur_df$group <- sur_df$NSMCE2
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - Breast", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC altered - Breast", censor = TRUE))
-}, error = function(cond) message(cond))
-
-
-tryCatch(expr = {
-    df <- raw_df[raw_df$major == "Breast", ]
-    df <- df[df$MYC == 0, ]
-    sur_df <- df
-    sur_df$group <- sur_df$isalt
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - Breast", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "SMC5/6 complex - MYC WT - Breast", censor = TRUE))
-    sur_df$group <- sur_df$NSMCE2
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - Breast", censor = FALSE))
-    print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC WT - Breast", censor = TRUE))
-}, error = function(cond) message(cond))
+sur_df$group <- NA
+sur_df$group[-grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Mutation"
+sur_df$group[sur_df$NSMCE2_det == ""] <- "Wild-type"
+sur_df$group[grep("amp", sur_df$NSMCE2_det, ignore.case = TRUE)] <- "Amplification"
+sur_df$group <- factor(sur_df$group, levels = c("Wild-type", "Amplification", "Mutation"))
+# print(table(grepl("amp", sur_df$MYC_det), sur_df$group))
+# sur_df <- sur_df[grep("amp", sur_df$MYC_det), ]
+# # print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - MYC amplified - Breast", censor = TRUE))
+# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - Breast", censor = TRUE))
+sur_df <- sur_df[sur_df$group != "Mutation", ]
+print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - Breast", censor = TRUE))
+# print(KM_survival_plot(sur_df = sur_df, title = "NSMCE2 - all Breast", censor = TRUE))
 
 dev.off()
 print("done")
+# df <- df[!is.na(df$OVT) & !is.na(df$OVS), ]
 
-table(raw_df$MYC, raw_df$NSMCE2)
-nrow(raw_df[raw_df$MYC == 1 & raw_df$NSMCE2 == "Altered", ])
+# print(table(grepl("amp", df$MYC_det), grepl("amp", df$NSMCE2_det, ignore.case = TRUE)))
+# print(table(df$MYC, df$NSMCE2))
