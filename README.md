@@ -19,7 +19,7 @@ Shamayita Roy<sup>1</sup>, Arvin Zaker<sup>2</sup>, Arvind Mer<sup>2,#</sup> & D
 
 ## Steps to reproduce the results:
 
-1. Download the manuscript associated data files from Zenodo at https://doi.org/10.5281/zenodo.7618023
+1. Download the manuscript associated data files from Zenodo at https://doi.org/10.5281/zenodo.8256823
 2. Place the files in the data folder in the data folder of the repository.
 3. Runs the scripts in the `./R/` folder from `s01_...` to `s12_...` in order. 
 4. Run the script pretaining to the figure you would like.
